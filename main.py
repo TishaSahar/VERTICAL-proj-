@@ -85,9 +85,10 @@ class MyApp(QDialog, Form):
     def saveFileDialog(self):
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        self._saving_directory = QFileDialog.getExistingDirectory(self,"Выберите путь для сохранения", "C:\\Users\Sunny\source\VerticalProject")
+        self._saving_directory = QFileDialog.getExistingDirectory(self,"Выберите путь для сохранения", self.getCurrPath(), options=options)
         self.label.setText(str(self._saving_directory))
         self.label.setStyleSheet('color: rgb(28, 181, 74)')
+
 
     def getCurrPath(self):
         return QtCore.QDir.currentPath()

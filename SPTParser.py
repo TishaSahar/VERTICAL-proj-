@@ -132,7 +132,7 @@ class SPTParser:
             curr_date = datetime.date(row[0].value)
             if (curr_date >= datetime.strptime(date_from, "%d-%m-%Y").date() and\
                 curr_date <= datetime.strptime(date_to, "%d-%m-%Y").date()):
-                ws.insert_rows(out_index)
+                ws.insert_rows(out_index.strftime("%d-%m-%Y"))
                 for i in range(1, 14):
                     thin = Side(border_style="thin", color="000000")
                     ws.cell(out_index, i).border = Border(top=thin, left=thin, right=thin, bottom=thin)

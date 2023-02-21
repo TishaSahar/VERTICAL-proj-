@@ -125,7 +125,7 @@ class VKTParser:
                             ws.cell(row_number, i).alignment = Alignment(horizontal="center", vertical="center")
 
                         # A main table
-                        ws['A' + str(row_number)] = str(curr_date)      #Date
+                        ws['A' + str(row_number)] = str(curr_date.strftime("%d-%m-%Y"))      #Date
                         if indexes['t1'] == -1: ws['B' + str(row_number)] = ' - ' 
                         else: 
                             ws['B' + str(row_number)] = str(num('t1')).replace('.', ',')
