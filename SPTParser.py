@@ -1,10 +1,8 @@
 from openpyxl import load_workbook
 from openpyxl.styles import Border, Side, PatternFill, Font, GradientFill, Alignment
-import win32com.client as win32
 import pyexcel
 import os
 from datetime import datetime
-from copy import copy
 
 months = {'01':'январь', '02':'февраль', '03':'март', '04':'апрель',\
          '05':'май', '06':'июнь', '07':'июль', '08':'август',\
@@ -132,12 +130,12 @@ class SPTParser:
             curr_date = datetime.date(row[0].value)
             if (curr_date >= datetime.strptime(date_from, "%d-%m-%Y").date() and\
                 curr_date <= datetime.strptime(date_to, "%d-%m-%Y").date()):
-                ws.insert_rows(out_index.strftime("%d-%m-%Y"))
+                ws.insert_rows(out_index)
                 for i in range(1, 14):
                     thin = Side(border_style="thin", color="000000")
                     ws.cell(out_index, i).border = Border(top=thin, left=thin, right=thin, bottom=thin)
                     ws.cell(out_index, i).alignment = Alignment(horizontal="center", vertical="center")
-                ws['A' + str(out_index)] = str(curr_date)
+                ws['A' + str(out_index)] = str(curr_date.strftime("%d-%m-%Y"))
                 if data_indexes['t1(°C)'] != -1:
                     if num('t1(°C)') != ' - ': t1_avg += num('t1(°C)') 
                     ws['B' + str(out_index)] = st_row(num('t1(°C)'))
@@ -227,7 +225,7 @@ class SPTParser:
         ws['B3'] = date_from
         ws['C3'] = date_to
         ws['B4'] = datetime.now().strftime("%d-%m-%Y")
-        ws['B5'] = '1'
+        ws['B5'] = rep_type
         ws['B6'] = head_data['consumer']
         ws['B7'] = head_data['order']
         ws['B8'] = head_data['adress']

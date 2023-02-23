@@ -1,10 +1,8 @@
 from openpyxl import load_workbook
 from openpyxl.styles import Border, Side, PatternFill, Font, GradientFill, Alignment
-import win32com.client as win32
 import pyexcel
 import os
 from datetime import datetime
-from copy import copy
 
 months = {'01':'январь', '02':'февраль', '03':'март', '04':'апрель',\
          '05':'май', '06':'июнь', '07':'июль', '08':'август',\
@@ -111,7 +109,7 @@ class VzletParser:
                     thin = Side(border_style="thin", color="000000")
                     ws.cell(out_index, i).border = Border(top=thin, left=thin, right=thin, bottom=thin)
                     ws.cell(out_index, i).alignment = Alignment(horizontal="center", vertical="center")
-                ws['A' + str(out_index)] = str(curr_date)
+                ws['A' + str(out_index)] = str(curr_date.strftime("%d-%m-%Y"))
                 if data_indexes['t1'] != -1:
                     if num('t1') != ' - ': t1_avg += num('t1') 
                     ws['B' + str(out_index)] = st_row(num('t1'))
@@ -199,7 +197,7 @@ class VzletParser:
         ws['B3'] = date_from
         ws['C3'] = date_to
         ws['B4'] = datetime.now().strftime("%d-%m-%Y")
-        ws['B5'] = '1'
+        ws['B5'] = rep_type
         ws['B6'] = head_data['consumer']
         ws['B7'] = head_data['order']
         ws['B8'] = head_data['adress']

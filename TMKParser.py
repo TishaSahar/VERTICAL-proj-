@@ -1,10 +1,8 @@
 from openpyxl import load_workbook
 from openpyxl.styles import Border, Side, PatternFill, Font, GradientFill, Alignment
-import win32com.client as win32
 import pyexcel
 import os
 from datetime import datetime
-from copy import copy
 
 months = {'01':'январь', '02':'февраль', '03':'март', '04':'апрель',\
          '05':'май', '06':'июнь', '07':'июль', '08':'август',\
@@ -78,13 +76,13 @@ class TMKParser:
                 heat_cols['V1'] = ind
             if 'V4' in cell.value and heat_cols['V2'] == -1:
                 heat_cols['V2'] = ind
-            if 'G1' in cell.value and heat_cols['M1'] == -1:
+            if 'G1' in cell.value:# and heat_cols['M1'] == -1:
                 heat_cols['M1'] = ind
-            if 'G2' in cell.value and heat_cols['M2'] == -1:
+            if 'G2' in cell.value:# and heat_cols['M2'] == -1:
                 heat_cols['M2'] = ind
-            if 'G3' in cell.value and heat_cols['M1'] == -1:
+            if 'G3' in cell.value:# and heat_cols['M1'] == -1:
                 heat_cols['M1'] = ind
-            if 'G4' in cell.value and heat_cols['M2'] == -1:
+            if 'G4' in cell.value:# and heat_cols['M2'] == -1:
                 heat_cols['M2'] = ind
             if 'Q' in cell.value and heat_cols['Q'] == -1:
                 heat_cols['Q'] = ind
@@ -276,7 +274,7 @@ class TMKParser:
         ws['B3'] = date_from
         ws['C3'] = date_to
         ws['B4'] = datetime.now().strftime("%d-%m-%Y")
-        ws['B5'] = '1'
+        ws['B5'] = rep_type
         ws['B6'] = head_data['consumer']
         ws['B7'] = head_data['order']
         ws['B8'] = head_data['adress']
@@ -298,7 +296,7 @@ class TMKParser:
 
         for file in self.my_parsing_files:
             rep_type = '1'
-            if 'ГВС' in file[0]:
+            if 'ГВС' in file[0] or 'гвс' in file[0]:
                 rep_type = '2'
             report += self.build_xls(file, rep_type, date_from, date_to)
 

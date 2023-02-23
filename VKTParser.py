@@ -1,10 +1,8 @@
 from openpyxl import load_workbook
 from openpyxl.styles import Border, Side, PatternFill, Font, GradientFill, Alignment
 import win32com.client as win32
-import pyexcel
 import os
 from datetime import datetime
-from copy import copy
 
 months = {'01':'январь', '02':'февраль', '03':'март', '04':'апрель',\
          '05':'май', '06':'июнь', '07':'июль', '08':'август',\

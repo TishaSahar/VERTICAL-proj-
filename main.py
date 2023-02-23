@@ -71,7 +71,7 @@ class MyApp(QDialog, Form):
     
 
     def openFileNamesDialog(self):
-        self.textBrowser.clear()
+        #self.textBrowser.clear()
         self.textBrowser.append('Выбранные файлы:\n')
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog

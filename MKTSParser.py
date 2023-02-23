@@ -1,10 +1,8 @@
 from openpyxl import load_workbook
 from openpyxl.styles import Border, Side, PatternFill, Font, GradientFill, Alignment
-import win32com.client as win32
 import pyexcel
 import os
 from datetime import datetime
-from copy import copy
 
 months = {'01':'январь', '02':'февраль', '03':'март', '04':'апрель',\
          '05':'май', '06':'июнь', '07':'июль', '08':'август',\
@@ -117,7 +115,7 @@ class MKTSParser:
                         ws.cell(out_index, i).border = Border(top=thin, left=thin, right=thin, bottom=thin)
                         ws.cell(out_index, i).alignment = Alignment(horizontal="center", vertical="center")
                     #[print(row[i].value, ' ') for i in range(0, 15)]
-                    ws['A' + str(out_index)] = str(curr_date)
+                    ws['A' + str(out_index)] = str(curr_date.strftime("%d-%m-%Y"))
                     if data_index['t1,°С'] == -1 or '-' in str(row[data_index['t1,°С']].value):
                         ws['B' + str(out_index)] = ' - '
                     else:

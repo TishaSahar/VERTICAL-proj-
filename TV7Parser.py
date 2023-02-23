@@ -1,11 +1,8 @@
 from openpyxl import load_workbook
 from openpyxl.styles import Border, Side, PatternFill, Font, GradientFill, Alignment
-import win32com.client as win32
 import pyexcel
 import os
 from datetime import datetime
-from copy import copy
-
 
 
 months = {'01':'январь', '02':'февраль', '03':'март', '04':'апрель',\
@@ -47,9 +44,9 @@ class TV7Parser:
         self.save_dir = save_dir
         for file in data_list['ТВ-7']:
             if 'xlsx' not in file:
-                raise Exception('Please, convert xls file to xlsx')
-                
-            self.my_parsing_files.append([file, load_workbook(file).active])
+                print('Please, convert xls file to xlsx in TV-7 files')
+            else:
+                self.my_parsing_files.append([file, load_workbook(file).active])
 
 
     def get_columns(self, row):
@@ -233,7 +230,7 @@ class TV7Parser:
         ws['B3'] = date_from
         ws['C3'] = date_to
         ws['B4'] = datetime.now().strftime("%d-%m-%Y")
-        ws['B5'] = '1'
+        ws['B5'] = str(rep_type)
         ws['B6'] = head_data['consumer']
         ws['B7'] = head_data['order']
         ws['B8'] = head_data['adress']
