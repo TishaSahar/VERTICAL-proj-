@@ -214,7 +214,7 @@ class VzletParser:
 
 
     def __call__(self, date_from = '01-01-2023', date_to = '18-01-2023'): 
-        report = '\nВЗЛЕТ\n'   
+        report = '\tВЗЛЕТ\n'   
         for file in self.my_parsing_files:
             rep_type = '1'
             if 'ГВС' in file[0]:

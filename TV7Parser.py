@@ -65,39 +65,34 @@ class TV7Parser:
         return heat_cols
 
 
-    def build_xls(self, file, rep_type, date_from = '01-01-2023', date_to = '18-01-2023'):
-        data_indexes = []
-        report = ''
-        template = load_workbook(self.my_dir + '\Templates\VEC_Template.xlsx',  read_only=False, data_only=False)  # Template xlsx file  
+    def build_xls(self, file, rep_type,  template, data_indexes=[], head_data={}, date_from='01-01-2023', date_to='18-01-2023', start_read_index=1, start_out_index=18, summs=[0,0,0,\
+                                                                                                                                                0,0,0,\
+                                                                                                                                                0,0,0, ''],a_resoul_flag=False):
+        report = '' # Out text, will be printed into my textBrowser
         file_name = file[0].split('/')[len(file[0].split('/')) - 1].split('.xlsx')[0]
-        
+    
         if file[0].split('/')[len(file[0].split('/')) - 1]:
             template.title = file[0].split('/')[len(file[0].split('/')) - 1]
+        
         ws = template.active
-        head_data = {}
-        row_index = 1; out_index = 18
-        dm_sum = 0; m1_sum = 0; m2_sum = 0; dv_sum = 0; v1_sum = 0; v2_sum = 0; t1_avg = 0; t2_avg = 0; q_sum = 0; vnr = 0; vos = 0; sum_err = ''    
-        for row in file[1].iter_rows():
+        row_index = start_read_index; out_index = start_out_index
+        t1_avg, t2_avg, m1_sum, m2_sum, v1_sum, v2_sum, q_sum, vnr, vos, sum_err = summs    
+
+        for row in file[1].iter_rows(min_row=row_index):
             num = lambda t: round(float(row[data_indexes[t]].value), 2) if row[data_indexes[t]].value != None else ' - '
             st_row = lambda n: str(n).replace('.', ',')
-            if row_index < 12:
-                row_index += 1
-                continue
-            if row_index == 12:
-                row_index += 1
-                head_data = get_head_data(self.my_dir, str(row[0].value).split('Серийный номер ')[1].split(',')[0], rep_type)
-                continue
-            if row_index == 14:
-                row_index += 1
-                data_indexes = self.get_columns(row)
-                continue
-            if row_index < 16:
-                row_index += 1
-                continue
 
             if row[0].value == 'Итого/Средн':
                 break
+
+            if row[0].value == None:
+                row_index += 1
+                continue
+
             tmp_date = row[0].value.split('.')
+            if len(tmp_date) < 3:
+                row_index += 1
+                continue
             curr_date = datetime.strptime(tmp_date[0] + '-' + tmp_date[1] + '-' + '20' + tmp_date[2].split(' ')[0], "%d-%m-%Y").date()
             if (curr_date >= datetime.strptime(date_from, "%d-%m-%Y").date() and\
                 curr_date <= datetime.strptime(date_to, "%d-%m-%Y").date()):
@@ -159,71 +154,72 @@ class TV7Parser:
                 out_index += 1
             row_index += 1
 
-        ws['B' + str(out_index + 1)] = round(t1_avg/(out_index - 16), 2)
-        ws['C' + str(out_index + 1)] = round(t2_avg/(out_index - 16), 2)
+        if a_resoul_flag == True:
+            ws['B' + str(out_index + 1)] = round(t1_avg/(out_index - 17), 2)
+            ws['C' + str(out_index + 1)] = round(t2_avg/(out_index - 17), 2)
 
-        sec_row = out_index + 1
-        # Parse resoult table
-        data_indexes = self.get_columns(file[1][sec_row])
-        summary_data = file[1][sec_row + 5]
+            sec_row = out_index + 1
+            # Parse resoult table
+            data_indexes = self.get_columns(file[1][row_index + 3])
+            summary_data = file[1][row_index + 8]
 
-        v1_start = 0; v2_start = 0; m1_start = 0; m2_start = 0; q_start = 0; vnr_start = 0; vos_start = 0;
-        num_finnaly = lambda t: round(float(summary_data[data_indexes[t]].value), 2) if summary_data[data_indexes[t]].value != None else ' - '
-        if summary_data[data_indexes['M1']] != None and data_indexes['M1'] != -1:
-            m1_start = num_finnaly('M1')
-            m1_sum += num_finnaly('M1')
-        if summary_data[data_indexes['M2']] != None and data_indexes['M2'] != -1:
-            m2_start = num_finnaly('M2')
-            m2_sum += num_finnaly('M2')
-        if summary_data[data_indexes['V1']] != None and data_indexes['V1'] != -1:
-            v1_start = num_finnaly('V1')
-            v1_sum += num_finnaly('V1')
-        if summary_data[data_indexes['V2']] != None and data_indexes['V2'] != -1:
-            v2_start = num_finnaly('V2')
-            v2_sum += num_finnaly('V2')
-        if summary_data[data_indexes['Q']] != None and data_indexes['Q'] != -1:
-            q_start = num_finnaly('Q')
-            q_sum += num_finnaly('Q')
-        if summary_data[data_indexes['ВНР']] != None and data_indexes['ВНР'] != -1:
-            vnr_start = num_finnaly('ВНР')
-            vnr += num_finnaly('ВНР')
-        if summary_data[data_indexes['ВОС']] != None and data_indexes['ВОС'] != -1:
-            vos_start = num_finnaly('ВОС')
-            vos += num_finnaly('ВОС')
+            v1_start = 0; v2_start = 0; m1_start = 0; m2_start = 0; q_start = 0; vnr_start = 0; vos_start = 0
+            num_finnaly = lambda t: round(float(summary_data[data_indexes[t]].value), 2) if summary_data[data_indexes[t]].value != None else ' - '
+            if summary_data[data_indexes['M1']] != None and data_indexes['M1'] != -1:
+                m1_start = num_finnaly('M1')
+                m1_sum += num_finnaly('M1')
+            if summary_data[data_indexes['M2']] != None and data_indexes['M2'] != -1:
+                m2_start = num_finnaly('M2')
+                m2_sum += num_finnaly('M2')
+            if summary_data[data_indexes['V1']] != None and data_indexes['V1'] != -1:
+                v1_start = num_finnaly('V1')
+                v1_sum += num_finnaly('V1')
+            if summary_data[data_indexes['V2']] != None and data_indexes['V2'] != -1:
+                v2_start = num_finnaly('V2')
+                v2_sum += num_finnaly('V2')
+            if summary_data[data_indexes['Q']] != None and data_indexes['Q'] != -1:
+                q_start = num_finnaly('Q')
+                q_sum += num_finnaly('Q')
+            if summary_data[data_indexes['ВНР']] != None and data_indexes['ВНР'] != -1:
+                vnr_start = num_finnaly('ВНР')
+                vnr += num_finnaly('ВНР')
+            if summary_data[data_indexes['ВОС']] != None and data_indexes['ВОС'] != -1:
+                vos_start = num_finnaly('ВОС')
+                vos += num_finnaly('ВОС')
 
-        sec_row += 3
-        # A resoult table 
-        ws['A' + str(sec_row)] = date_from  
-        ws['A' + str(sec_row + 1)] = date_to
-        ws['B' + str(sec_row)] = str(round(m1_start, 2)).replace('.', ',')
-        ws['B' + str(sec_row + 1)] = str(round(m1_sum, 2)).replace('.', ',')
-        ws['C' + str(sec_row)] = str(round(m2_start, 2)).replace('.', ',')
-        ws['C' + str(sec_row + 1)] = str(round(m2_sum, 2)).replace('.', ',')
-        q_col = 'D'; vnr_col = 'E'; vos_col = 'F'
-        if rep_type == '2':
-            ws['D' + str(sec_row - 1)] = 'V1, м3'
-            ws['D' + str(sec_row)] = str(round(v1_start, 2)).replace('.', ',')
-            ws['D' + str(sec_row + 1)] = str(round(v1_sum, 2)).replace('.', ',')
-            ws['E' + str(sec_row - 1)] = 'V2, м3'
-            ws['E' + str(sec_row)] = str(round(v2_start, 2)).replace('.', ',')
-            ws['E' + str(sec_row + 1)] = str(round(v2_sum, 2)).replace('.', ',')
-            for r in range(sec_row - 1, sec_row + 2):
-                thin = Side(border_style="thin", color="000000")
-                ws.cell(r, 7).border = Border(top=thin, left=thin, right=thin, bottom=thin)
-                ws.cell(r, 7).alignment = Alignment(horizontal="center", vertical="center")
-                ws.cell(r, 8).border = Border(top=thin, left=thin, right=thin, bottom=thin)
-                ws.cell(r, 8).alignment = Alignment(horizontal="center", vertical="center")
-            q_col = 'F'; vnr_col = 'G'; vos_col = 'H'
-            ws['F' + str(sec_row - 1)] = 'Q, Гкал'
-            ws['G' + str(sec_row - 1)] = 'ВНР, час'
-            ws['H' + str(sec_row - 1)] = 'ВОС, час'
-            
-        ws[q_col + str(sec_row)] = str(round(q_start, 2)).replace('.', ',')
-        ws[q_col + str(sec_row + 1)] = str(round(q_sum, 2)).replace('.', ',')
-        ws[vnr_col + str(sec_row)] = str(round(vnr_start, 2)).replace('.', ',')
-        ws[vnr_col + str(sec_row + 1)] = str(round(vnr, 2)).replace('.', ',')
-        ws[vos_col + str(sec_row)] = str(round(vos_start, 2)).replace('.', ',')
-        ws[vos_col + str(sec_row + 1)] = str(round(vos, 2)).replace('.', ',')
+            sec_row += 3
+            # A resoult table 
+            ws['A' + str(sec_row)] = date_from  
+            ws['A' + str(sec_row + 1)] = date_to
+            ws['B' + str(sec_row)] = str(round(m1_start, 2)).replace('.', ',')
+            ws['B' + str(sec_row + 1)] = str(round(m1_sum, 2)).replace('.', ',')
+            ws['C' + str(sec_row)] = str(round(m2_start, 2)).replace('.', ',')
+            ws['C' + str(sec_row + 1)] = str(round(m2_sum, 2)).replace('.', ',')
+            q_col = 'D'; vnr_col = 'E'; vos_col = 'F'
+            if rep_type == '2':
+                ws['D' + str(sec_row - 1)] = 'V1, м3'
+                ws['D' + str(sec_row)] = str(round(v1_start, 2)).replace('.', ',')
+                ws['D' + str(sec_row + 1)] = str(round(v1_sum, 2)).replace('.', ',')
+                ws['E' + str(sec_row - 1)] = 'V2, м3'
+                ws['E' + str(sec_row)] = str(round(v2_start, 2)).replace('.', ',')
+                ws['E' + str(sec_row + 1)] = str(round(v2_sum, 2)).replace('.', ',')
+                for r in range(sec_row - 1, sec_row + 2):
+                    thin = Side(border_style="thin", color="000000")
+                    ws.cell(r, 7).border = Border(top=thin, left=thin, right=thin, bottom=thin)
+                    ws.cell(r, 7).alignment = Alignment(horizontal="center", vertical="center")
+                    ws.cell(r, 8).border = Border(top=thin, left=thin, right=thin, bottom=thin)
+                    ws.cell(r, 8).alignment = Alignment(horizontal="center", vertical="center")
+                q_col = 'F'; vnr_col = 'G'; vos_col = 'H'
+                ws['F' + str(sec_row - 1)] = 'Q, Гкал'
+                ws['G' + str(sec_row - 1)] = 'ВНР, час'
+                ws['H' + str(sec_row - 1)] = 'ВОС, час'
+
+            ws[q_col + str(sec_row)] = str(round(q_start, 2)).replace('.', ',')
+            ws[q_col + str(sec_row + 1)] = str(round(q_sum, 2)).replace('.', ',')
+            ws[vnr_col + str(sec_row)] = str(round(vnr_start, 2)).replace('.', ',')
+            ws[vnr_col + str(sec_row + 1)] = str(round(vnr, 2)).replace('.', ',')
+            ws[vos_col + str(sec_row)] = str(round(vos_start, 2)).replace('.', ',')
+            ws[vos_col + str(sec_row + 1)] = str(round(vos, 2)).replace('.', ',')
 
         # Fill head data
         ws['A1'] = str(ws['A1'].value).replace('май', get_month(datetime.now().strftime("%d-%m-%Y")))
@@ -242,18 +238,48 @@ class TV7Parser:
             os.makedirs(curr_dir)
 
         template.save(curr_dir + '/' + file_name + '.xlsx')
-        report += curr_dir + '/' + file_name + '.xlsx'+ '\n\n'
+        report += curr_dir + '/' + file_name + '.xlsx'
 
-        return report
+        return [report, row_index, out_index, [t1_avg, t2_avg, m1_sum, m2_sum, v1_sum, v2_sum, q_sum, vnr, vos, sum_err]]
 
 
     def __call__(self, date_from = '01-01-2023', date_to = '18-01-2023'):
-        report = '\tТВ - 7\n'
+        summary_rep = '\tТВ - 7\n'
 
         for file in self.my_parsing_files:
             rep_type = '1'
             if 'ГВС' in file[0]:
                 rep_type = '2'
-            report += self.build_xls(file, rep_type, date_from, date_to)
+            move_index = 1
+            for row in file[1].iter_rows(max_row=16):
+                if row[0].value == None: 
+                    move_index += 1
+                    continue
+                if 'Серийный номер' in row[0].value:
+                    head_data = get_head_data(self.my_dir, str(row[0].value).split('Серийный номер ')[1].split(',')[0], rep_type)
+                if 'Дата/время' in row[0].value:
+                    data_indexes = self.get_columns(row)
+                    break
+                move_index += 1
 
-        return report    
+            template = load_workbook(self.my_dir + '\Templates\VEC_Template.xlsx',  read_only=False, data_only=False)
+            report, row_inx, out_row_indx, summs = self.build_xls(file, rep_type, template, data_indexes, head_data, date_from, date_to, start_read_index=move_index, a_resoul_flag=False)
+
+            move_index = 10
+            for row in file[1].iter_rows(min_row=row_inx+10):
+                if row[0].value == None: 
+                    move_index += 1
+                    continue
+                if 'Серийный номер' in row[0].value:
+                    head_data = get_head_data(self.my_dir, str(row[0].value).split('Серийный номер ')[1].split(',')[0], rep_type)
+                if 'Дата/время' in row[0].value:
+                    data_indexes = self.get_columns(row)
+                    break
+                move_index += 1
+
+            data_indexes = self.get_columns(file[1][row_inx+move_index])
+            template = load_workbook(report,  read_only=False, data_only=False)
+            report, row_inx, out_row_indx, summs = self.build_xls(file, rep_type, template, data_indexes, head_data, date_from, date_to, row_inx + move_index, out_row_indx, summs, True)
+            summary_rep += '\n' + report + '\n'
+
+        return summary_rep

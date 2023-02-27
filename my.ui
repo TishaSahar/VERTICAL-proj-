@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>576</width>
-    <height>327</height>
+    <width>1001</width>
+    <height>592</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,10 +16,10 @@
   <widget class="QGroupBox" name="groupBox">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>10</y>
-     <width>161</width>
-     <height>211</height>
+     <x>330</x>
+     <y>20</y>
+     <width>271</width>
+     <height>381</height>
     </rect>
    </property>
    <property name="title">
@@ -30,8 +30,8 @@
      <rect>
       <x>10</x>
       <y>20</y>
-      <width>121</width>
-      <height>17</height>
+      <width>161</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
@@ -42,9 +42,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>40</y>
+      <y>70</y>
       <width>121</width>
-      <height>17</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
@@ -55,9 +55,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>60</y>
+      <y>120</y>
       <width>70</width>
-      <height>17</height>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
@@ -68,9 +68,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>80</y>
+      <y>170</y>
       <width>70</width>
-      <height>17</height>
+      <height>61</height>
      </rect>
     </property>
     <property name="text">
@@ -81,9 +81,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>100</y>
+      <y>230</y>
       <width>70</width>
-      <height>17</height>
+      <height>61</height>
      </rect>
     </property>
     <property name="text">
@@ -94,9 +94,9 @@
     <property name="geometry">
      <rect>
       <x>10</x>
-      <y>120</y>
-      <width>41</width>
-      <height>21</height>
+      <y>300</y>
+      <width>81</width>
+      <height>51</height>
      </rect>
     </property>
     <property name="text">
@@ -107,10 +107,10 @@
   <widget class="QGroupBox" name="groupBox_2">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>100</y>
-     <width>181</width>
-     <height>121</height>
+     <x>20</x>
+     <y>160</y>
+     <width>261</width>
+     <height>241</height>
     </rect>
    </property>
    <property name="title">
@@ -119,10 +119,10 @@
    <widget class="QLabel" name="label_2">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>20</y>
-      <width>21</width>
-      <height>31</height>
+      <x>30</x>
+      <y>50</y>
+      <width>31</width>
+      <height>61</height>
      </rect>
     </property>
     <property name="text">
@@ -132,10 +132,10 @@
    <widget class="QLabel" name="label_3">
     <property name="geometry">
      <rect>
-      <x>10</x>
-      <y>70</y>
-      <width>31</width>
-      <height>31</height>
+      <x>30</x>
+      <y>140</y>
+      <width>41</width>
+      <height>61</height>
      </rect>
     </property>
     <property name="text">
@@ -145,10 +145,10 @@
    <widget class="QDateEdit" name="dateEdit">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>20</y>
-      <width>111</width>
-      <height>31</height>
+      <x>110</x>
+      <y>40</y>
+      <width>121</width>
+      <height>71</height>
      </rect>
     </property>
     <property name="dateTime">
@@ -165,10 +165,10 @@
    <widget class="QDateEdit" name="dateEdit_2">
     <property name="geometry">
      <rect>
-      <x>50</x>
-      <y>70</y>
-      <width>111</width>
-      <height>31</height>
+      <x>110</x>
+      <y>140</y>
+      <width>121</width>
+      <height>71</height>
      </rect>
     </property>
     <property name="dateTime">
@@ -187,9 +187,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>20</y>
-     <width>151</width>
-     <height>51</height>
+     <y>30</y>
+     <width>261</width>
+     <height>101</height>
     </rect>
    </property>
    <property name="text">
@@ -200,9 +200,9 @@
    <property name="geometry">
     <rect>
      <x>20</x>
-     <y>260</y>
-     <width>151</width>
-     <height>51</height>
+     <y>480</y>
+     <width>261</width>
+     <height>91</height>
     </rect>
    </property>
    <property name="text">
@@ -212,10 +212,10 @@
   <widget class="QPushButton" name="pushButton">
    <property name="geometry">
     <rect>
-     <x>210</x>
-     <y>230</y>
-     <width>161</width>
-     <height>81</height>
+     <x>330</x>
+     <y>440</y>
+     <width>271</width>
+     <height>131</height>
     </rect>
    </property>
    <property name="text">
@@ -225,11 +225,14 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>10</x>
-     <y>230</y>
-     <width>181</width>
-     <height>20</height>
+     <x>30</x>
+     <y>410</y>
+     <width>251</width>
+     <height>61</height>
     </rect>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
    </property>
    <property name="text">
     <string>  Путь до сохранения не выбран</string>
@@ -238,10 +241,10 @@
   <widget class="QTextBrowser" name="textBrowser">
    <property name="geometry">
     <rect>
-     <x>380</x>
-     <y>20</y>
-     <width>181</width>
-     <height>291</height>
+     <x>620</x>
+     <y>10</y>
+     <width>361</width>
+     <height>561</height>
     </rect>
    </property>
   </widget>
