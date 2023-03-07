@@ -42,9 +42,14 @@ class VzletParser:
         self.save_dir = save_dir
         for file in data_list['ВЗЛЕТ']:
             if 'xlsx' not in file:
-                pyexcel.save_book_as(file_name=file,
+                if 'xls' in file:
+                    pyexcel.save_book_as(file_name=file,
                                 dest_file_name=file + 'x')
-                file += 'x'
+                    file += 'x'
+                else:
+                    print('Vzlet wrong file!')
+                    continue
+
             self.my_parsing_files.append([file, load_workbook(file).active])
 
     def get_columns(self, row):
@@ -101,6 +106,7 @@ class VzletParser:
                 continue
             if row[0].value == None:
                 break
+            
             curr_date = datetime.date(row[0].value)
             if (curr_date >= datetime.strptime(date_from, "%d-%m-%Y").date() and\
                 curr_date <= datetime.strptime(date_to, "%d-%m-%Y").date()):
@@ -207,8 +213,12 @@ class VzletParser:
         curr_dir = self.save_dir + '/Output/' + head_data['save_folder']
         if not os.path.exists(curr_dir):
             os.makedirs(curr_dir)
-        template.save(curr_dir + '/' + file_name + '.xlsx')
-        report += curr_dir + '/' + file_name + '.xlsx'+ '\n\n'
+        string_type = '_отопл'
+        if rep_type == '2':
+            string_type = '_ГВС'
+        
+        template.save(curr_dir + '/' + head_data['adress'] + string_type + '.xlsx')
+        report += curr_dir + '/' + head_data['adress'] + string_type + '.xlsx'+ '\n\n'
 
         return report
 

@@ -32,9 +32,8 @@ def get_head_data(my_dir, factory_num, inp_type):
             head_data['adress'] = header_ws['E' + str(i)].value
             head_data['cold_temp'] = header_ws['G' + str(i)].value
             head_data['save_folder'] = header_ws['J' + str(i)].value
-    
-    return head_data
 
+    return head_data
 
 
 class TV7Parser:
@@ -44,9 +43,15 @@ class TV7Parser:
         self.save_dir = save_dir
         for file in data_list['ТВ-7']:
             if 'xlsx' not in file:
-                print('Please, convert xls file to xlsx in TV-7 files')
-            else:
-                self.my_parsing_files.append([file, load_workbook(file).active])
+                if 'xls' in file:
+                    pyexcel.save_book_as(file_name=file,
+                                dest_file_name=file + 'x')
+                    file += 'x'
+                else:
+                    print('TMK wrong file!')
+                    continue
+                
+            self.my_parsing_files.append([file, load_workbook(file).active])
 
 
     def get_columns(self, row):
@@ -60,6 +65,12 @@ class TV7Parser:
             for key in heat_cols.keys():
                 if key in cell.value and heat_cols[key] == -1:
                     heat_cols[key] = ind
+            if 'H.C.' in cell.value:
+                heat_cols['НС'] = ind
+            if 'BНP' in cell.value:
+                heat_cols['ВНР'] = ind
+            if 'BOC' in cell.value:
+                heat_cols['ВОС'] = ind
             ind += 1
 
         return heat_cols
@@ -67,7 +78,7 @@ class TV7Parser:
 
     def build_xls(self, file, rep_type,  template, data_indexes=[], head_data={}, date_from='01-01-2023', date_to='18-01-2023', start_read_index=1, start_out_index=18, summs=[0,0,0,\
                                                                                                                                                 0,0,0,\
-                                                                                                                                                0,0,0, ''],a_resoul_flag=False):
+                                                                                                                                                0,0,0, ''],a_resoul_flag=False, date_format='TV7'):
         report = '' # Out text, will be printed into my textBrowser
         file_name = file[0].split('/')[len(file[0].split('/')) - 1].split('.xlsx')[0]
     
@@ -81,19 +92,24 @@ class TV7Parser:
         for row in file[1].iter_rows(min_row=row_index):
             num = lambda t: round(float(row[data_indexes[t]].value), 2) if row[data_indexes[t]].value != None else ' - '
             st_row = lambda n: str(n).replace('.', ',')
-
-            if row[0].value == 'Итого/Средн':
+            
+            if 'Итого:' == row[0].value or 'Итого/Средн' == row[0].value:
                 break
 
             if row[0].value == None:
                 row_index += 1
                 continue
-
-            tmp_date = row[0].value.split('.')
-            if len(tmp_date) < 3:
+            
+            tmp_date = str(row[0].value).replace('-', '.').replace('00:00:00', '').split('.')
+            if len(tmp_date) < 3 or len(str(tmp_date[1])) != 2:
                 row_index += 1
                 continue
-            curr_date = datetime.strptime(tmp_date[0] + '-' + tmp_date[1] + '-' + '20' + tmp_date[2].split(' ')[0], "%d-%m-%Y").date()
+
+            if date_format == 'VKT':
+                curr_date = datetime.strptime(tmp_date[2].replace(' ', '') + '-' + tmp_date[1].replace(' ', '') + '-' + tmp_date[0].split(' ')[0].replace(' ', ''), "%d-%m-%Y").date()
+            else:
+                curr_date = datetime.strptime(tmp_date[0] + '-' + tmp_date[1] + '-' + '20' + tmp_date[2].split(' ')[0], "%d-%m-%Y").date()
+
             if (curr_date >= datetime.strptime(date_from, "%d-%m-%Y").date() and\
                 curr_date <= datetime.strptime(date_to, "%d-%m-%Y").date()):
                 ws.insert_rows(out_index)
@@ -160,9 +176,23 @@ class TV7Parser:
 
             sec_row = out_index + 1
             # Parse resoult table
-            data_indexes = self.get_columns(file[1][row_index + 3])
             summary_data = file[1][row_index + 8]
+            if date_format == 'VKT':
+                row_shift = 0
+                for row in file[1].iter_rows(min_row=row_index):
+                    if row[0].value == None:
+                        row_shift += 1
+                        continue
+                    if 'Дaтa' in row[0].value:
+                        break
+                    row_shift += 1
 
+                data_indexes = self.get_columns(file[1][row_index + row_shift])
+                summary_data = file[1][row_index + row_shift+2]
+            else:
+                data_indexes = self.get_columns(file[1][row_index + 3])
+                summary_data = file[1][row_index + 8]
+            
             v1_start = 0; v2_start = 0; m1_start = 0; m2_start = 0; q_start = 0; vnr_start = 0; vos_start = 0
             num_finnaly = lambda t: round(float(summary_data[data_indexes[t]].value), 2) if summary_data[data_indexes[t]].value != None else ' - '
             if summary_data[data_indexes['M1']] != None and data_indexes['M1'] != -1:
@@ -236,9 +266,12 @@ class TV7Parser:
         curr_dir = self.save_dir + '/Output/' + head_data['save_folder']
         if not os.path.exists(curr_dir):
             os.makedirs(curr_dir)
+        str_rep = '_ГВС'
+        if rep_type == '1':
+            str_rep = '_отопл'
 
-        template.save(curr_dir + '/' + file_name + '.xlsx')
-        report += curr_dir + '/' + file_name + '.xlsx'
+        template.save(curr_dir + '/' + head_data['adress'] + str_rep + '.xlsx')
+        report += curr_dir + '/' + head_data['adress'] + str_rep +'.xlsx'
 
         return [report, row_index, out_index, [t1_avg, t2_avg, m1_sum, m2_sum, v1_sum, v2_sum, q_sum, vnr, vos, sum_err]]
 

@@ -42,9 +42,13 @@ class SPTParser:
         self.save_dir = save_dir
         for file in data_list['СПТ']:
             if 'xlsx' not in file:
-                pyexcel.save_book_as(file_name=file,
+                if 'xls' in file:
+                    pyexcel.save_book_as(file_name=file,
                                 dest_file_name=file + 'x')
-                file += 'x'
+                    file += 'x'
+                else:
+                    print('SPT wrong file!')
+                    continue
             self.my_parsing_files.append([file, load_workbook(file).active])
 
     def get_columns(self, row):
@@ -236,11 +240,11 @@ class SPTParser:
         if not os.path.exists(curr_dir):
             os.makedirs(curr_dir)
         if rep_type == '1':
-            template.save(curr_dir + '/' + file_name + 'отопл' + '.xlsx')
-            report += curr_dir + '/' + file_name + 'отопл' + '.xlsx'+ '\n\n'
+            template.save(curr_dir + '/' + head_data['adress'] + '_отопл' + '.xlsx')
+            report += curr_dir + '/' + head_data['adress'] + '_отопл' + '.xlsx'+ '\n\n'
         else:
-            template.save(curr_dir + '/' + file_name + 'ГВС' + '.xlsx')
-            report += curr_dir + '/' + file_name + 'ГВС' + '.xlsx'+ '\n\n'
+            template.save(curr_dir + '/' + head_data['adress'] + '_ГВС' + '.xlsx')
+            report += curr_dir + '/' + head_data['adress'] + '_ГВС' + '.xlsx'+ '\n\n'
 
         return report
 

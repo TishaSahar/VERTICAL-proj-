@@ -32,7 +32,6 @@ def get_head_data(my_dir, factory_num, inp_type):
             head_data['adress'] = header_ws['E' + str(i)].value
             head_data['cold_temp'] = header_ws['G' + str(i)].value
             head_data['save_folder'] = header_ws['J' + str(i)].value
-    
     return head_data
 
 
@@ -43,10 +42,16 @@ class TMKParser:
         self.save_dir = save_dir
         for file in data_list['ТМК']:
             if 'xlsx' not in file:
-                pyexcel.save_book_as(file_name=file,
+                if 'xls' in file:
+                    pyexcel.save_book_as(file_name=file,
                                 dest_file_name=file + 'x')
-                file += 'x'
+                    file += 'x'
+                else:
+                    print('TMK wrong file!')
+                    continue
+                
             self.my_parsing_files.append([file, load_workbook(file).active])
+
 
     def get_factory_num(self, row):
         factory_num = ''
@@ -190,12 +195,6 @@ class TMKParser:
                     ws['L' + str(out_index)] = st_row(24.0 - float_time('Tн'))
                     ws['L' + str(out_index + 1)] = str(round(vos, 2)).replace('.', ',')
 
-                #if data_indexes['НС'] != -1 and row[data_indexes['НС']].value != None:
-                #    ws['M' + str(out_index)] = st_row(row[data_indexes['НС']].value)
-                #    if str(row[data_indexes['НС']].value) not in sum_err:
-                #        sum_err += row[data_indexes['НС']].value
-                #    ws['M' + str(out_index + 1)] = sum_err
-
                 out_index += 1
             row_index += 1
 
@@ -285,8 +284,12 @@ class TMKParser:
         if not os.path.exists(curr_dir):
             os.makedirs(curr_dir)
 
-        template.save(curr_dir + '/' + file_name + '.xlsx')
-        report += curr_dir + '/' + file_name + '.xlsx'+ '\n\n'
+        str_rep = '_ГВС'
+        if rep_type == '1':
+            str_rep = '_отопл'
+
+        template.save(curr_dir + '/' + head_data['adress'] + str_rep + '.xlsx')
+        report += curr_dir + '/' + head_data['adress'] + str_rep +'.xlsx'
 
         return report
 
@@ -298,9 +301,6 @@ class TMKParser:
             rep_type = '1'
             if 'ГВС' in file[0] or 'гвс' in file[0]:
                 rep_type = '2'
+
             report += self.build_xls(file, rep_type, date_from, date_to)
-
         return report
-
-
-    

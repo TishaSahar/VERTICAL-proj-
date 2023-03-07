@@ -1,5 +1,6 @@
-from PyQt5 import uic, QtCore 
-from PyQt5.QtWidgets import QDialog, QApplication, QInputDialog, QLineEdit, QFileDialog, QDateTimeEdit
+from PyQt5 import uic, QtCore
+from PyQt5.QtWidgets import QDialog, QApplication, QInputDialog, QLineEdit, QFileDialog, QDateTimeEdit, QFontDialog
+from PyQt5.QtGui import *
 import sys
 
 from VzletParser import VzletParser
@@ -23,7 +24,7 @@ class MyApp(QDialog, Form):
         # Saving directory and local path
         self._saving_directory = ''
 
-        # My widgets parametrs
+        # My widgets styles
         self.title = 'Обработка отчетов'
         self.left = 10
         self.top = 10
@@ -34,12 +35,27 @@ class MyApp(QDialog, Form):
         self.setAttribute(QtCore.Qt.WA_StyledBackground, True)
         self.setStyleSheet('background-color: rgb(210, 221, 239);')
         self.label.setStyleSheet('color: rgb(255, 68, 68)')
-        self.pushButton_2.setStyleSheet('background-color: rgb(212, 210, 239);')
-        self.pushButton.setStyleSheet('background-color: rgb(212, 210, 239);')
+        self.label.setFont(QFont('Arial', 11))
+        self.pushButton_2.setStyleSheet('color: rgb(95, 68, 68); background-color: rgb(212, 210, 239);')
+        self.pushButton_2.setFont(QFont('Arial', 14))
+        self.pushButton.setStyleSheet('color: rgb(95, 68, 68); background-color: rgb(212, 210, 239);')
+        self.pushButton.setFont(QFont('Arial', 14))
+        self.pushButton_3.setStyleSheet('color: rgb(95, 68, 68); background-color: rgb(212, 210, 239);')
+        self.pushButton_3.setFont(QFont('Arial', 14))
         self.groupBox.setStyleSheet('background-color: rgb(212, 210, 239);')
         self.groupBox_2.setStyleSheet('background-color: rgb(212, 210, 239);')
 
+        # Change check boxes style
+        self.checkVzlet.setFont(QFont('Arial', 12))
+        self.checkVKT.setFont(QFont('Arial', 12))
+        self.checkMKTS.setFont(QFont('Arial', 12))
+        self.checkSPT.setFont(QFont('Arial', 12))
+        self.checkTV7.setFont(QFont('Arial', 12))
+        self.checkTMK.setFont(QFont('Arial', 12))
+
         self.textBrowser.append('Выберите файлы для обработки' + '\n')
+
+        # Connecting functions with bottoms
         self.pushButton_2.clicked.connect(self.openFileNamesDialog)
         self.pushButton.clicked.connect(self.parse_files)
         self.pushButton_3.clicked.connect(self.saveFileDialog)
@@ -48,11 +64,12 @@ class MyApp(QDialog, Form):
     def get_data(self):
         return self.__data_list
 
+
     def set_data(self, data):
         self.__data_list.append(data)
     data = property(get_data, set_data)
 
-
+    # Set my UI
     def initUI(self):
         self.setWindowTitle(self.title)
         self.setGeometry(self.left, self.top, self.width, self.height)
@@ -101,7 +118,7 @@ class MyApp(QDialog, Form):
     def read_files(self):
         for file in self.__name_list:
             for key in self.__data_list.keys():
-                if key in file and file not in self.__data_list[key]:
+                if key in file.replace(' ', '') and file not in self.__data_list[key]:
                     self.__data_list[key].append(file)
 
         return self.__data_list

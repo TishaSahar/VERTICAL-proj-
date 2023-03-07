@@ -42,9 +42,14 @@ class MKTSParser:
         self.save_dir = save_dir
         for file in data_list['МКТС']:
             if 'xlsx' not in file:
-                pyexcel.save_book_as(file_name=file,
-                                dest_file_name=file + 'x')
+                if 'xls' in file:
+                    pyexcel.save_book_as(file_name=file,
+                                    dest_file_name=file + 'x')
+                else:
+                    print('MKTS wrong file!')
+                    continue
                 file += 'x'
+
             self.my_parsing_files.append([file, load_workbook(filename=file,  read_only=True).active])
 
 
@@ -203,33 +208,33 @@ class MKTSParser:
             vos_col = 'F'
             
             sec_row = out_index + 4
-            row_index += 4
+            row_index += 3
             final_m1 = '-'; final_m2 ='-'; final_v1 = '-'; final_v2 = '-'; final_q = '-'; final_vnr = '-'; final_vos = '-'
             if data_index['M1'] != -1:
-                if '-' not in str(file[1].cell(row=row_index, column=data_index['M1']).value):
-                    final_m1 = float(str(file[1].cell(row=row_index, column=data_index['M1']).value).replace(',', '.').replace(' ', ''))
+                if '-' not in str(file[1].cell(row=row_index, column=data_index['M1'] + 1).value):
+                    final_m1 = float(str(file[1].cell(row=row_index, column=data_index['M1'] + 1).value).replace(',', '.').replace(' ', ''))
             if data_index['M2'] != -1:
-                if '-' not in str(file[1].cell(row=row_index, column=data_index['M2']).value):
-                    final_m2 = float(str(file[1].cell(row=row_index, column=data_index['M2']).value).replace(',', '.').replace(' ', ''))
+                if '-' not in str(file[1].cell(row=row_index, column=data_index['M2'] + 1).value):
+                    final_m2 = float(str(file[1].cell(row=row_index, column=data_index['M2']+1).value).replace(',', '.').replace(' ', ''))
             if data_index['V1'] != -1:
-                if '-' not in str(file[1].cell(row=row_index, column=data_index['V1']).value):
-                    final_v1 = float(str(file[1].cell(row=row_index, column=data_index['V1']).value).replace(',', '.').replace(' ', ''))
+                if '-' not in str(file[1].cell(row=row_index, column=data_index['V1'] + 1).value):
+                    final_v1 = float(str(file[1].cell(row=row_index, column=data_index['V1'] + 1).value).replace(',', '.').replace(' ', ''))
             else:
                 final_v1 = '-'
             if data_index['V2'] != -1: 
-                if '-' not in str(file[1].cell(row=row_index, column=data_index['V2']).value):
-                    final_v2 = float(str(file[1].cell(row=row_index, column=data_index['V2']).value).replace(',', '.').replace(' ', ''))
+                if '-' not in str(file[1].cell(row=row_index, column=data_index['V2'] + 1).value):
+                    final_v2 = float(str(file[1].cell(row=row_index, column=data_index['V2'] + 1).value).replace(',', '.').replace(' ', ''))
 
             if data_index['Q'] != -1: 
-                if '-' not in str(file[1].cell(row=row_index, column=data_index['Q']).value):
-                    final_q = float(str(file[1].cell(row=row_index, column=data_index['Q']).value).replace(',', '.').replace(' ', ''))
+                if '-' not in str(file[1].cell(row=row_index, column=data_index['Q']+1).value):
+                    final_q = float(str(file[1].cell(row=row_index, column=data_index['Q'] + 1).value).replace(',', '.').replace(' ', ''))
 
             if data_index['Tраб'] != -1:
-                if '-' not in str(file[1].cell(row=row_index, column=data_index['Tраб']).value):
-                    final_vnr = float(str(file[1].cell(row=row_index, column=data_index['Tраб']).value).replace(',', '.').replace(' ', ''))
+                if '-' not in str(file[1].cell(row=row_index, column=data_index['Tраб']+1).value):
+                    final_vnr = float(str(file[1].cell(row=row_index, column=data_index['Tраб']+1).value).replace(',', '.').replace(' ', ''))
             if data_index['Tотк'] != -1: 
-                if '-' not in str(file[1].cell(row=row_index, column=data_index['Tотк']).value):  
-                    final_vos = float(str(file[1].cell(row=row_index, column=data_index['Tотк']).value).replace(',', '.').replace(' ', ''))
+                if '-' not in str(file[1].cell(row=row_index, column=data_index['Tотк']+1).value):  
+                    final_vos = float(str(file[1].cell(row=row_index, column=data_index['Tотк']+1).value).replace(',', '.').replace(' ', ''))
 
             ws['A' + str(sec_row)] = date_from
             ws['A' + str(sec_row + 1)] = date_to
@@ -240,6 +245,9 @@ class MKTSParser:
                 ws['B' + str(sec_row)] = 0
                 ws['B' + str(sec_row + 1)] = str(round(m1_sum, 2)).replace('.', ',')
             if final_m2 != '-':
+                ws['C' + str(sec_row)] = final_m2
+                ws['C' + str(sec_row + 1)] = str(round(m2_sum + final_m2, 2)).replace('.', ',')
+            else:
                 ws['C' + str(sec_row)] = 0
                 ws['C' + str(sec_row + 1)] = str(round(m2_sum, 2)).replace('.', ',')
 
@@ -277,9 +285,7 @@ class MKTSParser:
             else:
                 ws[q_col + str(sec_row)] = 0
                 ws[q_col + str(sec_row + 1)] = str(round(q_sum, 2)).replace('.', ',')
-            t = final_vos
-            final_vos = final_vnr
-            final_vnr = t
+
             if final_vnr != '-':
                 ws[vnr_col + str(sec_row)] = final_vnr
                 ws[vnr_col + str(sec_row + 1)] = str(round(vnr + final_vnr, 2)).replace('.', ',')
@@ -309,8 +315,12 @@ class MKTSParser:
 
             curr_dir = self.save_dir + '/Output/' + head_data['save_folder']
             if not os.path.exists(curr_dir):
-                os.makedirs(curr_dir)   
-            template.save(curr_dir + '/' + file_name + '.xlsx')
-            report += curr_dir + '/' + file_name + '.xlsx'+ '\n\n'
+                os.makedirs(curr_dir)
+
+            str_type = '_отопл'
+            if 'ГВС' in file[0]:
+                str_type = '_ГВС'
+            template.save(curr_dir + '/' + head_data['adress'] + str_type + '.xlsx')
+            report += curr_dir + '/' + head_data['adress'] + str_type + '.xlsx'+ '\n\n'
 
         return report
