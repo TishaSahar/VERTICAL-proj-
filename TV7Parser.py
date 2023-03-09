@@ -191,34 +191,34 @@ class TV7Parser:
                 summary_data = file[1][row_index + row_shift+2]
             else:
                 data_indexes = self.get_columns(file[1][row_index + 3])
-                summary_data = file[1][row_index + 8]
+                summary_data = file[1][row_index + 9]
             
             v1_start = 0; v2_start = 0; m1_start = 0; m2_start = 0; q_start = 0; vnr_start = 0; vos_start = 0
             num_finnaly = lambda t: round(float(summary_data[data_indexes[t]].value), 2) if summary_data[data_indexes[t]].value != None else ' - '
             if summary_data[data_indexes['M1']] != None and data_indexes['M1'] != -1:
-                m1_start = num_finnaly('M1')
-                m1_sum += num_finnaly('M1')
+                m1_start = num_finnaly('M1') - m1_sum
+                m1_sum = num_finnaly('M1')
             if summary_data[data_indexes['M2']] != None and data_indexes['M2'] != -1:
-                m2_start = num_finnaly('M2')
-                m2_sum += num_finnaly('M2')
+                m2_start = num_finnaly('M2') - m2_sum
+                m2_sum = num_finnaly('M2')
             if summary_data[data_indexes['V1']] != None and data_indexes['V1'] != -1:
-                v1_start = num_finnaly('V1')
-                v1_sum += num_finnaly('V1')
+                v1_start = num_finnaly('V1') - v1_sum
+                v1_sum = num_finnaly('V1')
             if summary_data[data_indexes['V2']] != None and data_indexes['V2'] != -1:
-                v2_start = num_finnaly('V2')
-                v2_sum += num_finnaly('V2')
+                v2_start = num_finnaly('V2') - v2_sum
+                v2_sum = num_finnaly('V2')
             if summary_data[data_indexes['Q']] != None and data_indexes['Q'] != -1:
-                q_start = num_finnaly('Q')
-                q_sum += num_finnaly('Q')
+                q_start = num_finnaly('Q') - q_sum
+                q_sum = num_finnaly('Q')
             if summary_data[data_indexes['ВНР']] != None and data_indexes['ВНР'] != -1:
-                vnr_start = num_finnaly('ВНР')
-                vnr += num_finnaly('ВНР')
+                vnr_start = num_finnaly('ВНР') - vnr
+                vnr = num_finnaly('ВНР')
             if summary_data[data_indexes['ВОС']] != None and data_indexes['ВОС'] != -1:
-                vos_start = num_finnaly('ВОС')
-                vos += num_finnaly('ВОС')
+                vos_start = num_finnaly('ВОС') - vos
+                vos = num_finnaly('ВОС')
 
             sec_row += 3
-            # A resoult table 
+            # A resoult table   
             ws['A' + str(sec_row)] = date_from  
             ws['A' + str(sec_row + 1)] = date_to
             ws['B' + str(sec_row)] = str(round(m1_start, 2)).replace('.', ',')
@@ -269,10 +269,9 @@ class TV7Parser:
         str_rep = '_ГВС'
         if rep_type == '1':
             str_rep = '_отопл'
-
-        template.save(curr_dir + '/' + head_data['adress'] + str_rep + '.xlsx')
-        report += curr_dir + '/' + head_data['adress'] + str_rep +'.xlsx'
-
+        
+        template.save(curr_dir + '/' + head_data['adress'].replace('/', 'к') + str_rep + '.xlsx')
+        report += curr_dir + '/' + head_data['adress'].replace('/', 'к') + str_rep +'.xlsx'
         return [report, row_index, out_index, [t1_avg, t2_avg, m1_sum, m2_sum, v1_sum, v2_sum, q_sum, vnr, vos, sum_err]]
 
 
@@ -281,7 +280,7 @@ class TV7Parser:
 
         for file in self.my_parsing_files:
             rep_type = '1'
-            if 'ГВС' in file[0]:
+            if 'ГВС' in file[0].upper():
                 rep_type = '2'
             move_index = 1
             for row in file[1].iter_rows(max_row=16):

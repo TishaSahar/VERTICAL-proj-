@@ -59,7 +59,6 @@ class VzletParser:
             if cell.value == None:
                 ind += 1
                 continue
-
             for key in heat_cols.keys():
                 if key in cell.value:
                     heat_cols[key] = ind
@@ -71,14 +70,13 @@ class VzletParser:
                 heat_cols['V1'] = ind
             if 'V4' in cell.value:
                 heat_cols['V2'] = ind
-            if 'M3' in cell.value:
+            if 'М1, т' in cell.value or 'M3' in cell.value:
                 heat_cols['M1'] = ind
-            if 'M4' in cell.value:
+            if 'M2, т' in cell.value or 'M4' in cell.value:
                 heat_cols['M2'] = ind
-            if 'Нараб' in cell.value:
+            if 'Нараб' in cell.value or 'Время раб' in cell.value:
                 heat_cols['Т, ч'] = ind
             ind += 1
-
         return heat_cols
 
      
@@ -92,7 +90,7 @@ class VzletParser:
 
         head_data = {}; data_indexes = {}
         row_index = 1; out_index = 18
-        dm_sum = 0; m1_sum = 0; m2_sum = 0; dv_sum = 0; v1_sum = 0; v2_sum = 0; t1_avg = 0; t2_avg = 0; q_sum = 0; vnr = 0; vos = 0; sum_err = ''    
+        m1_sum = 0; m2_sum = 0; v1_sum = 0; v2_sum = 0; t1_avg = 0; t2_avg = 0; q_sum = 0; vnr = 0; vos = 0; sum_err = ''    
         for row in file[1].iter_rows():
             num = lambda t: round(float(row[data_indexes[t]].value), 2) if row[data_indexes[t]].value != None else ' - '
             st_row = lambda n: str(n).replace('.', ',')
@@ -157,28 +155,65 @@ class VzletParser:
                     vos += (24.0 - num('Т, ч'))
                     ws['L' + str(out_index)] = st_row(round(24.0 - num('Т, ч'), 2))
                     ws['L' + str(out_index + 1)] = str(round(vos, 2)).replace('.', ',')
-
+                else:
+                    vnr += 24
+                    ws['K' + str(out_index)] = st_row(24.0)
+                    ws['K' + str(out_index + 1)] = str(round(vnr, 2)).replace('.', ',')
+                    vos += 0
+                    ws['L' + str(out_index)] = st_row(0)
+                    ws['L' + str(out_index + 1)] = str(round(vos, 2)).replace('.', ',')
                 out_index += 1
             row_index += 1
 
         ws['B' + str(out_index + 1)] = round(t1_avg/(out_index - 17), 2)
         ws['C' + str(out_index + 1)] = round(t2_avg/(out_index - 17), 2)
 
+        sec_row = out_index + 1
+        sum_table_index = row_index + 1
+        v1_start = 0; v2_start = 0; m1_start = 0; m2_start = 0; q_start = 0; vnr_start = 0; vos_start = 0
+        if None != file[1][sum_table_index][0].value:
+            if 'Дата и время' in file[1][sum_table_index][0].value:
+                data_indexes = self.get_columns(file[1][sum_table_index])
+        else:
+            data_indexes = {'Время': -1, 't1': -1, 't2': -1,'V1': -1,'M1': -1,'V2': -1,'M2': -1, 'Q': -1, 'Т, ч': -1}
+        
+        summary_data = file[1][sum_table_index + 1]
+        num_finnaly = lambda t: round(float(str(summary_data[data_indexes[t]].value).replace(',', '.')), 2) if summary_data[data_indexes[t]].value != None else ' - '
+        
+        if summary_data[data_indexes['M1']].value != None and data_indexes['M1'] != -1:
+            m1_start = num_finnaly('M1')
+            m1_sum += num_finnaly('M1')
+        if summary_data[data_indexes['M2']].value != None and data_indexes['M2'] != -1:
+            m2_start = num_finnaly('M2')
+            m2_sum += num_finnaly('M2')
+        if summary_data[data_indexes['V1']].value != None and data_indexes['V1'] != -1:
+            v1_start = num_finnaly('V1')
+            v1_sum += num_finnaly('V1')
+        if summary_data[data_indexes['V2']].value != None and data_indexes['V2'] != -1:
+            v2_start = num_finnaly('V2')
+            v2_sum += num_finnaly('V2')
+        if summary_data[data_indexes['Q']].value != None and data_indexes['Q'] != -1:
+            q_start = num_finnaly('Q')
+            q_sum += num_finnaly('Q')
+        if summary_data[data_indexes['Т, ч']].value != None and data_indexes['Т, ч'] != -1:
+            vnr_start = num_finnaly('Т, ч')
+            vnr += num_finnaly('Т, ч')
+
+        sec_row += 3
         # A resoult table 
-        sec_row = out_index + 4
-        ws['A' + str(sec_row)] = date_from
+        ws['A' + str(sec_row)] = date_from  
         ws['A' + str(sec_row + 1)] = date_to
-        ws['B' + str(sec_row)] = ws['E18'].value
+        ws['B' + str(sec_row)] = str(round(m1_start, 2)).replace('.', ',')
         ws['B' + str(sec_row + 1)] = str(round(m1_sum, 2)).replace('.', ',')
-        ws['C' + str(sec_row)] = ws['G18'].value
+        ws['C' + str(sec_row)] = str(round(m2_start, 2)).replace('.', ',')
         ws['C' + str(sec_row + 1)] = str(round(m2_sum, 2)).replace('.', ',')
         q_col = 'D'; vnr_col = 'E'; vos_col = 'F'
         if rep_type == '2':
             ws['D' + str(sec_row - 1)] = 'V1, м3'
-            ws['D' + str(sec_row)] = ws['D18'].value
+            ws['D' + str(sec_row)] = str(round(v1_start, 2)).replace('.', ',')
             ws['D' + str(sec_row + 1)] = str(round(v1_sum, 2)).replace('.', ',')
             ws['E' + str(sec_row - 1)] = 'V2, м3'
-            ws['E' + str(sec_row)] = ws['F18'].value
+            ws['E' + str(sec_row)] = str(round(v2_start, 2)).replace('.', ',')
             ws['E' + str(sec_row + 1)] = str(round(v2_sum, 2)).replace('.', ',')
             for r in range(sec_row - 1, sec_row + 2):
                 thin = Side(border_style="thin", color="000000")
@@ -191,11 +226,11 @@ class VzletParser:
             ws['G' + str(sec_row - 1)] = 'ВНР, час'
             ws['H' + str(sec_row - 1)] = 'ВОС, час'
             
-        ws[q_col + str(sec_row)] = '0'
+        ws[q_col + str(sec_row)] = str(round(q_start, 2)).replace('.', ',')
         ws[q_col + str(sec_row + 1)] = str(round(q_sum, 2)).replace('.', ',')
-        ws[vnr_col + str(sec_row)] = '0'
+        ws[vnr_col + str(sec_row)] = str(round(vnr_start, 2)).replace('.', ',')
         ws[vnr_col + str(sec_row + 1)] = str(round(vnr, 2)).replace('.', ',')
-        ws[vos_col + str(sec_row)] = '0'
+        ws[vos_col + str(sec_row)] = str(round(vos_start, 2)).replace('.', ',')
         ws[vos_col + str(sec_row + 1)] = str(round(vos, 2)).replace('.', ',')
 
         # Fill head data
@@ -217,8 +252,8 @@ class VzletParser:
         if rep_type == '2':
             string_type = '_ГВС'
         
-        template.save(curr_dir + '/' + head_data['adress'] + string_type + '.xlsx')
-        report += curr_dir + '/' + head_data['adress'] + string_type + '.xlsx'+ '\n\n'
+        template.save(curr_dir + '/' + head_data['adress'].replace('/', 'к') + string_type + '.xlsx')
+        report += curr_dir + '/' + head_data['adress'].replace('/', 'к') + string_type + '.xlsx'+ '\n\n'
 
         return report
 
@@ -227,7 +262,7 @@ class VzletParser:
         report = '\tВЗЛЕТ\n'   
         for file in self.my_parsing_files:
             rep_type = '1'
-            if 'ГВС' in file[0]:
+            if 'ГВС' in file[0].upper():
                 rep_type = '2'
             report += self.build_xls(file, rep_type, date_from, date_to)
 

@@ -246,8 +246,8 @@ class VKTParser:
         out_type = '_ГВС'
         if input_type == '1':
             out_type = '_отопл'
-        template.save(curr_dir + '/' + head_data['adress'] + out_type + '.xlsx')
-        report += curr_dir + '/' + head_data['adress'] + out_type + '.xlsx'+ '\n\n'
+        template.save(curr_dir + '/' + head_data['adress'].replace('/', 'к') + out_type + '.xlsx')
+        report += curr_dir + '/' + head_data['adress'].replace('/', 'к') + out_type + '.xlsx'+ '\n\n'
         return report
 
 

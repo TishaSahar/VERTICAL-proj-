@@ -70,28 +70,28 @@ class TMKParser:
                 ind += 1
                 continue
             for key in heat_cols.keys():
-                if key == cell.value and heat_cols[key] == -1:
+                if key in cell.value and 'G1-G2' not in cell.value and 'V1-V2' not in cell.value:
                     heat_cols[key] = ind
-
+            #print(cell.value, ' ', ind)
             if 't3' in cell.value and heat_cols['t1'] == -1:
                 heat_cols['t1'] = ind
             if 't4' in cell.value and heat_cols['t2'] == -1:
                 heat_cols['t2'] = ind
-            if 'V3' in cell.value and heat_cols['V1'] == -1:
+            if 'V3' in cell.value and heat_cols['V1'] == -1 and 'V1-V2' not in cell.value:
                 heat_cols['V1'] = ind
-            if 'V4' in cell.value and heat_cols['V2'] == -1:
+            if 'V4' in cell.value and heat_cols['V2'] == -1 and 'V1-V2' not in cell.value:
                 heat_cols['V2'] = ind
-            if 'G1' in cell.value:# and heat_cols['M1'] == -1:
+            if 'G1' in cell.value and heat_cols['M1'] == -1 and 'G1-G2' not in cell.value:
                 heat_cols['M1'] = ind
-            if 'G2' in cell.value:# and heat_cols['M2'] == -1:
+            if 'G2' in cell.value and heat_cols['M2'] == -1 and 'G1-G2' not in cell.value:
                 heat_cols['M2'] = ind
-            if 'G3' in cell.value:# and heat_cols['M1'] == -1:
+            if 'G3' in cell.value and heat_cols['M1'] == -1 and 'G3-G4' not in cell.value:
                 heat_cols['M1'] = ind
-            if 'G4' in cell.value:# and heat_cols['M2'] == -1:
+            if 'G4' in cell.value and heat_cols['M2'] == -1 and 'G3-G4' not in cell.value:
                 heat_cols['M2'] = ind
             if 'Q' in cell.value and heat_cols['Q'] == -1:
                 heat_cols['Q'] = ind
-            if 'Tр,' in cell.value and heat_cols['Tн'] == -1:
+            if ('Tр,' in cell.value or 'Время' in cell.value or 'Tраб' in cell.value) and heat_cols['Tн'] == -1:
                 heat_cols['Tн'] = ind
             if 'Tн' in cell.value and heat_cols['Tн'] == -1:
                 heat_cols['Tн'] = ind
@@ -126,10 +126,15 @@ class TMKParser:
             if row_index < 2:
                 row_index += 1					
                 continue
-
-            if row[0].value == 'Дата' or file[1]['A' + str(row_index-1)].value == 'Дата':
+            
+            if row[0].value == 'Дата':
                 data_indexes = self.get_columns(row, data_indexes)
-                data_indexes = self.get_columns(file[1][row_index+1], data_indexes)
+                row_index += 1
+                data_index = row_index
+                continue
+
+            if file[1]['A' + str(row_index-1)].value == 'Дата':
+                data_indexes = self.get_columns(row, data_indexes)
                 row_index += 1
                 data_index = row_index
                 continue
@@ -288,10 +293,10 @@ class TMKParser:
         if rep_type == '1':
             str_rep = '_отопл'
 
-        template.save(curr_dir + '/' + head_data['adress'] + str_rep + '.xlsx')
-        report += curr_dir + '/' + head_data['adress'] + str_rep +'.xlsx'
+        template.save(curr_dir + '/' + head_data['adress'].replace('/', 'к') + str_rep + '.xlsx')
+        report += curr_dir + '/' + head_data['adress'].replace('/', 'к') + str_rep +'.xlsx'
 
-        return report
+        return report + '\n'
 
 
     def __call__(self, date_from = '01-01-2023', date_to = '18-01-2023'):
@@ -299,8 +304,8 @@ class TMKParser:
 
         for file in self.my_parsing_files:
             rep_type = '1'
-            if 'ГВС' in file[0] or 'гвс' in file[0]:
+            if 'ГВС' in file[0].upper():
                 rep_type = '2'
 
-            report += self.build_xls(file, rep_type, date_from, date_to)
+            report += self.build_xls(file, rep_type, date_from, date_to) + '\n'
         return report

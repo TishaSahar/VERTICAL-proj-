@@ -76,7 +76,7 @@ class MKTSParser:
             ws = template.active
 
             order_type = '1'
-            if 'ГВС' in file[0]:
+            if 'ГВС' in file[0].upper():
                 order_type = '2'
 
             head_data = {}
@@ -318,7 +318,7 @@ class MKTSParser:
                 os.makedirs(curr_dir)
 
             str_type = '_отопл'
-            if 'ГВС' in file[0]:
+            if 'ГВС' in file[0].upper():
                 str_type = '_ГВС'
             template.save(curr_dir + '/' + head_data['adress'] + str_type + '.xlsx')
             report += curr_dir + '/' + head_data['adress'] + str_type + '.xlsx'+ '\n\n'
