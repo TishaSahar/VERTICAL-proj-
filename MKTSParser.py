@@ -23,7 +23,7 @@ def get_head_data(my_dir, factory_num, inp_type):
             head_data['adress'] = header_ws['F' + str(i)].value
             head_data['cold_temp'] = header_ws['H' + str(i)].value
             head_data['save_folder'] = header_ws['K' + str(i)].value
-        elif '-' in factory_num and str(header_ws['A' + str(i)].value.split('_')[0]) in factory_num + '_' + inp_type:
+        elif '-' in factory_num and str(header_ws['A' + str(i)].value).split('_')[0] in factory_num + '_' + inp_type:
             head_data['factory_num'] = factory_num
             head_data['complex_num'] = header_ws['C' + str(i)].value
             head_data['consumer'] = header_ws['D' + str(i)].value
@@ -66,11 +66,12 @@ class MKTSParser:
         return nums_of_data
 
 
-    def __call__(self, date_from = '01-01-2023', date_to = '18-01-2023'):
+    def __call__(self):
         report = '\tМКТС:\n' # Window print
         for file in self.my_parsing_files:
-            template = load_workbook(self.my_dir + '\Templates\VEC_Template.xlsx',  read_only=False, data_only=False)  # Template xlsx file  
-            file_name = file[0].split('/')[len(file[0].split('/')) - 1].split('.xlsx')[0]
+            date_from = ''
+            date_to = ''
+            template = load_workbook(self.my_dir + '\Templates\VEC_Template.xlsx',  read_only=False, data_only=False)  # Template xlsx file
             if file[0].split('/')[len(file[0].split('/')) - 1]:
                 template.title = file[0].split('/')[len(file[0].split('/')) - 1]
             ws = template.active
@@ -112,92 +113,88 @@ class MKTSParser:
     
                 tmp_date = row[0].value.split(',')
                 curr_date = datetime.strptime(tmp_date[0] + '-' + tmp_date[1] + '-' + '20' + tmp_date[2], "%d-%m-%Y").date()
-                if (curr_date >= datetime.strptime(date_from, "%d-%m-%Y").date() and\
-                    curr_date <= datetime.strptime(date_to, "%d-%m-%Y").date()):
-                    ws.insert_rows(out_index)
-                    for i in range(1, 14):
-                        thin = Side(border_style="thin", color="000000")
-                        ws.cell(out_index, i).border = Border(top=thin, left=thin, right=thin, bottom=thin)
-                        ws.cell(out_index, i).alignment = Alignment(horizontal="center", vertical="center")
-                    #[print(row[i].value, ' ') for i in range(0, 15)]
-                    ws['A' + str(out_index)] = str(curr_date.strftime("%d-%m-%Y"))
-                    if data_index['t1,°С'] == -1 or '-' in str(row[data_index['t1,°С']].value):
-                        ws['B' + str(out_index)] = ' - '
-                    else:
-                        ws['B' + str(out_index)] = st_row(num('t1,°С'))
-                        t1_avg += num('t1,°С')
+                if date_from == '':
+                    date_from = curr_date
+                date_to = curr_date
+                ws.insert_rows(out_index)
+                for i in range(1, 14):
+                    thin = Side(border_style="thin", color="000000")
+                    ws.cell(out_index, i).border = Border(top=thin, left=thin, right=thin, bottom=thin)
+                    ws.cell(out_index, i).alignment = Alignment(horizontal="center", vertical="center")
+                #[print(row[i].value, ' ') for i in range(0, 15)]
+                ws['A' + str(out_index)] = str(curr_date.strftime("%d-%m-%Y"))
+                if data_index['t1,°С'] == -1 or '-' in str(row[data_index['t1,°С']].value):
+                    ws['B' + str(out_index)] = ' - '
+                else:
+                    ws['B' + str(out_index)] = st_row(num('t1,°С'))
+                    t1_avg += num('t1,°С')
+                if data_index['t2,°С'] == -1 or '-' in str(row[data_index['t2,°С']].value):
+                    ws['C' + str(out_index)] = ' - '
+                else:
+                    ws['C' + str(out_index)] = st_row(num('t2,°С'))
+                    t2_avg += num('t2,°С')
+                if data_index['V1'] == -1 or '-' in str(row[data_index['V1']].value):
+                    ws['D' + str(out_index)] = ' - '
+                else:
+                    ws['D' + str(out_index)] = st_row(num('V1'))
+                    v1_sum += num('V1')
+                    ws['D' + str(out_index + 1)] = st_row(round(v1_sum))
+                if data_index['M1'] == -1 or '-' in str(row[data_index['M1']].value):
+                    ws['E' + str(out_index)] = ' - '
+                else:
+                    ws['E' + str(out_index)] = st_row(num('M1'))
+                    m1_sum += num('M1')
+                    dm_sum = m1_sum
+                    ws['E' + str(out_index + 1)] = st_row(round(m1_sum, 2))
+                if data_index['V2'] == -1 or '-' in str(row[data_index['V2']].value):
+                    ws['F' + str(out_index)] = ' - '
+                    ws['H' + str(out_index)] = ws['D' + str(out_index)].value
+                else:
+                    ws['F' + str(out_index)] = st_row(num('V2'))
+                    v2_sum += num('V2')
+                    dv_sum += round(abs(num('V2') - num('V1')), 2)
+                    ws['F' + str(out_index + 1)] = st_row(round(v2_sum, 2))
+                    ws['H' + str(out_index)] = st_row(round(abs(num('V2') - num('V1')), 2))
+                if data_index['M2'] == -1 or '-' in str(row[data_index['M2']].value):
+                    ws['G' + str(out_index)] = ' - '
+                    ws['I' + str(out_index)] = ws['E' + str(out_index)].value
+                    ws['I' + str(out_index + 1)] = round(dm_sum, 2)
+                else:
+                    ws['G' + str(out_index)] = st_row(num('M2'))
+                    m2_sum += num('M2')
+                    dm_sum -= round(abs(m2_sum - m1_sum), 2)
+                    ws['G' + str(out_index + 1)] = st_row(round(m2_sum, 2))
+                    ws['I' + str(out_index)] = st_row(round(abs(num('M2') - num('M1')), 2))
+                    ws['I' + str(out_index + 1)] = st_row(round(abs(m2_sum - m1_sum), 2))
+                if data_index['Q'] == -1  or '-' in str(row[data_index['Q']].value):
+                    ws['J' + str(out_index)] = ' - '
+                else:
+                    ws['J' + str(out_index)] = st_row(num('Q'))
+                    q_sum += num('Q')
+                    ws['J' + str(out_index + 1)] = st_row(round(q_sum, 2))
+                
+                if data_index['Tраб'] == -1 or '-' in str(row[data_index['Tраб']].value):
+                    ws['K' + str(out_index)] = ' - '
+                else:
+                    ws['k' + str(out_index)] = st_row(num('Tраб'))
+                    vnr += num('Tраб')
+                    ws['K' + str(out_index + 1)] = st_row(round(vnr, 2))
+                if data_index['Tотк'] == -1 or '-' in str(row[data_index['Tотк']].value):
+                    ws['L' + str(out_index)] = ' - '
+                else:
+                    ws['L' + str(out_index)] = st_row(num('Tотк'))
+                    vos += num('Tотк')
+                    ws['L' + str(out_index + 1)] = st_row(round(vos, 2))
+                if data_index['Отка'] == -1 or type(row[data_index['Отка']].value) != str:
+                    ws['M' + str(out_index)] = ' '
+                else:
+                    ws['M' + str(out_index)] = row[data_index['Отка']].value
+                    if sum_err == '': sum_err += row[data_index['Отка']].value
+                    elif row[data_index['Отка']].value not in sum_err:
+                        sum_err += ', ' + sum_err + row[data_index['Отка']].value
 
-                    if data_index['t2,°С'] == -1 or '-' in str(row[data_index['t2,°С']].value):
-                        ws['C' + str(out_index)] = ' - '
-                    else:
-                        ws['C' + str(out_index)] = st_row(num('t2,°С'))
-                        t2_avg += num('t2,°С')
-
-                    if data_index['V1'] == -1 or '-' in str(row[data_index['V1']].value):
-                        ws['D' + str(out_index)] = ' - '
-                    else:
-                        ws['D' + str(out_index)] = st_row(num('V1'))
-                        v1_sum += num('V1')
-                        ws['D' + str(out_index + 1)] = st_row(round(v1_sum))
-                    if data_index['M1'] == -1 or '-' in str(row[data_index['M1']].value):
-                        ws['E' + str(out_index)] = ' - '
-                    else:
-                        ws['E' + str(out_index)] = st_row(num('M1'))
-                        m1_sum += num('M1')
-                        dm_sum = m1_sum
-                        ws['E' + str(out_index + 1)] = st_row(round(m1_sum, 2))
-                    if data_index['V2'] == -1 or '-' in str(row[data_index['V2']].value):
-                        ws['F' + str(out_index)] = ' - '
-                        ws['H' + str(out_index)] = ws['D' + str(out_index)].value
-                    else:
-                        ws['F' + str(out_index)] = st_row(num('V2'))
-                        v2_sum += num('V2')
-                        dv_sum += round(abs(num('V2') - num('V1')), 2)
-                        ws['F' + str(out_index + 1)] = st_row(round(v2_sum, 2))
-                        ws['H' + str(out_index)] = st_row(round(abs(num('V2') - num('V1')), 2))
-
-                    if data_index['M2'] == -1 or '-' in str(row[data_index['M2']].value):
-                        ws['G' + str(out_index)] = ' - '
-                        ws['I' + str(out_index)] = ws['E' + str(out_index)].value
-                        ws['I' + str(out_index + 1)] = round(dm_sum, 2)
-                    else:
-                        ws['G' + str(out_index)] = st_row(num('M2'))
-                        m2_sum += num('M2')
-                        dm_sum -= round(abs(m2_sum - m1_sum), 2)
-                        ws['G' + str(out_index + 1)] = st_row(round(m2_sum, 2))
-                        ws['I' + str(out_index)] = st_row(round(abs(num('M2') - num('M1')), 2))
-                        ws['I' + str(out_index + 1)] = st_row(round(abs(m2_sum - m1_sum), 2))
-                    if data_index['Q'] == -1  or '-' in str(row[data_index['Q']].value):
-                        ws['J' + str(out_index)] = ' - '
-                    else:
-                        ws['J' + str(out_index)] = st_row(num('Q'))
-                        q_sum += num('Q')
-                        ws['J' + str(out_index + 1)] = st_row(round(q_sum, 2))
-                    
-                    if data_index['Tраб'] == -1 or '-' in str(row[data_index['Tраб']].value):
-                        ws['K' + str(out_index)] = ' - '
-                    else:
-                        ws['k' + str(out_index)] = st_row(num('Tраб'))
-                        vnr += num('Tраб')
-                        ws['K' + str(out_index + 1)] = st_row(round(vnr, 2))
-
-                    if data_index['Tотк'] == -1 or '-' in str(row[data_index['Tотк']].value):
-                        ws['L' + str(out_index)] = ' - '
-                    else:
-                        ws['L' + str(out_index)] = st_row(num('Tотк'))
-                        vos += num('Tотк')
-                        ws['L' + str(out_index + 1)] = st_row(round(vos, 2))
-
-                    if data_index['Отка'] == -1 or type(row[data_index['Отка']].value) != str:
-                        ws['M' + str(out_index)] = ' '
-                    else:
-                        ws['M' + str(out_index)] = row[data_index['Отка']].value
-                        if sum_err == '': sum_err += row[data_index['Отка']].value
-                        elif row[data_index['Отка']].value not in sum_err:
-                            sum_err += ', ' + sum_err + row[data_index['Отка']].value
-
-                    out_index += 1
-                    row_index += 1
+                out_index += 1
+                row_index += 1
 
             if t1_avg != 0:
                 ws['B' + str(out_index + 1)] = str(round(t1_avg / (row_index-4), 2)).replace('.', ',')
@@ -302,10 +299,10 @@ class MKTSParser:
                 ws[vos_col + str(sec_row)] = 0
                 ws[vos_col + str(sec_row + 1)] = str(round(vos, 2)).replace('.', ',')
 
-            # Fill head data    
-            ws['A1'] = str(ws['A1'].value).replace('май', get_month(datetime.now().strftime("%d-%m-%Y")))
-            ws['B3'] = date_from
-            ws['C3'] = date_to
+            # Fill head data
+            ws['A1'] = str(ws['A1'].value).replace('май', get_month(str(date_to)[8:10] + '-' + str(date_to)[5:7] + '-' + str(date_to)[0:4]))
+            ws['B3'] = datetime.strftime(date_from, "%d-%m-%Y")
+            ws['C3'] = datetime.strftime(date_to, "%d-%m-%Y")
             ws['B4'] = datetime.now().strftime("%d-%m-%Y")
             ws['B5'] = order_type
             ws['B6'] = head_data['consumer']
@@ -323,6 +320,6 @@ class MKTSParser:
             if 'ГВС' in file[0].upper():
                 str_type = '_ГВС'
             template.save(curr_dir + '/' + head_data['adress'] + str_type + '.xlsx')
-            report += curr_dir + '/' + head_data['adress'] + str_type + '.xlsx'+ '\n\n'
+            report += head_data['save_folder'] + '/' + head_data['adress'] + str_type + '.xlsx'+ '\n\n'
 
         return report

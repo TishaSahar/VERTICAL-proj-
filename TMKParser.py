@@ -24,7 +24,7 @@ def get_head_data(my_dir, factory_num, inp_type):
             head_data['adress'] = header_ws['F' + str(i)].value
             head_data['cold_temp'] = header_ws['H' + str(i)].value
             head_data['save_folder'] = header_ws['K' + str(i)].value
-        elif '-' in factory_num and str(header_ws['A' + str(i)].value.split('_')[0]) in factory_num + '_' + inp_type:
+        elif '-' in factory_num and str(header_ws['A' + str(i)].value).split('_')[0] in factory_num + '_' + inp_type:
             head_data['factory_num'] = factory_num
             head_data['complex_num'] = header_ws['C' + str(i)].value
             head_data['consumer'] = header_ws['D' + str(i)].value
@@ -66,7 +66,7 @@ class TMKParser:
 
     def get_columns(self, row, heat_cols={'Время': -1, 't1': -1, 't2': -1,'V1': -1,'M1': -1,'V2': -1,'M2': -1, 'Q': -1, 'Tн': -1,'ВОС': -1, 'НС': -1}):
         ind = 0
-        rep_type = '1'
+        #rep_type = '1'
         for cell in row:
             if cell.value == None:
                 ind += 1
@@ -74,14 +74,12 @@ class TMKParser:
             for key in heat_cols.keys():
                 if key in cell.value and 'G1-G2' not in cell.value and 'V1-V2' not in cell.value:
                     heat_cols[key] = ind
-            #print(cell.value, ' ', ind)
+            
             if 't3' in cell.value and heat_cols['t1'] == -1:
-                rep_type = '2'
                 heat_cols['t1'] = ind
             if 't4' in cell.value and heat_cols['t2'] == -1:
                 heat_cols['t2'] = ind
             if 'V3' in cell.value and heat_cols['V1'] == -1 and 'V1-V2' not in cell.value:
-                rep_type = '2'
                 heat_cols['V1'] = ind
             if 'V4' in cell.value and heat_cols['V2'] == -1 and 'V1-V2' not in cell.value:
                 heat_cols['V2'] = ind
@@ -90,7 +88,6 @@ class TMKParser:
             if 'G2' in cell.value and heat_cols['M2'] == -1 and 'G1-G2' not in cell.value:
                 heat_cols['M2'] = ind
             if 'G3' in cell.value and heat_cols['M1'] == -1 and 'G3-G4' not in cell.value:
-                rep_type = '2'
                 heat_cols['M1'] = ind
             if 'G4' in cell.value and heat_cols['M2'] == -1 and 'G3-G4' not in cell.value:
                 heat_cols['M2'] = ind
@@ -104,7 +101,7 @@ class TMKParser:
                 heat_cols['НС'] = ind
             ind += 1
 
-        return [heat_cols, rep_type]
+        return heat_cols
 
 
     def num_def(self, t, summary_data, data_indexes):
@@ -116,8 +113,19 @@ class TMKParser:
         else:
             return ' - '
         
+    def time_conv(self, t, summary_data, data_indexes):
+        if summary_data[data_indexes[t]].value != None: 
+            if '-' not in str(summary_data[data_indexes[t]].value):
+                return round(float(str(summary_data[data_indexes[t]].value).split(':')[0]) + (0.0167) * float(str(summary_data[data_indexes[t]].value).split(':')[1]), 2)
+            else:
+                return ' - '
+        else:
+            return ' - '
+        
 
-    def build_xls(self, file, rep_type, date_from = '01-01-2023', date_to = '18-01-2023'):
+    def build_xls(self, file, rep_type, start_col=1):
+        date_from = ''
+        date_to = ''
         report = ''
         template = load_workbook(self.my_dir + '\Templates\VEC_Template.xlsx',  read_only=False, data_only=False)  # Template xlsx file  
         file_name = file[0].split('/')[len(file[0].split('/')) - 1].split('.xlsx')[0]
@@ -131,7 +139,7 @@ class TMKParser:
         row_index = 1; out_index = 18; data_index = 1
         dm_sum = 0; m1_sum = 0; m2_sum = 0; dv_sum = 0; v1_sum = 0; v2_sum = 0; t1_avg = 0; t2_avg = 0; q_sum = 0; vnr = 0; vos = 0; sum_err = ''    
         
-        for row in file[1].iter_rows():
+        for row in file[1].iter_rows(min_col=start_col):
             num = '-'
             float_time = '-'
             float_time = lambda t: round(float(str(row[data_indexes[t]].value).split(':')[0]) + 0.0167 * float(str(row[data_indexes[t]].value).split(':')[1]), 2)
@@ -143,13 +151,13 @@ class TMKParser:
                 continue
             
             if row[0].value == 'Дата':
-                data_indexes, rep_type = self.get_columns(row, data_indexes)
+                data_indexes = self.get_columns(row, data_indexes)
                 row_index += 1
                 data_index = row_index
                 continue
 
             if file[1]['A' + str(row_index-1)].value == 'Дата':
-                data_indexes, rep_type = self.get_columns(row, data_indexes)
+                data_indexes = self.get_columns(row, data_indexes)
                 row_index += 1
                 data_index = row_index
                 continue
@@ -164,58 +172,60 @@ class TMKParser:
 
             tmp_date = row[0].value.split('.')
             curr_date = datetime.strptime(tmp_date[0] + '-' + tmp_date[1] + '-' + tmp_date[2].split(' ')[0], "%d-%m-%Y").date()
-            if (curr_date >= datetime.strptime(date_from, "%d-%m-%Y").date() and\
-                curr_date <= datetime.strptime(date_to, "%d-%m-%Y").date()):
-                ws.insert_rows(out_index)
-                for i in range(1, 14):
-                    thin = Side(border_style="thin", color="000000")
-                    ws.cell(out_index, i).border = Border(top=thin, left=thin, right=thin, bottom=thin)
-                    ws.cell(out_index, i).alignment = Alignment(horizontal="center", vertical="center")
-                ws['A' + str(out_index)] = str(curr_date.strftime("%d-%m-%Y"))
-                if data_indexes['t1'] != -1:
-                    if num('t1') != ' - ': t1_avg += num('t1') 
-                    ws['B' + str(out_index)] = st_row(num('t1'))
-                if data_indexes['t2'] != -1:
-                    if num('t2') != ' - ': t2_avg += num('t2')
-                    ws['C' + str(out_index)] = st_row(num('t2'))
-                if data_indexes['V1'] != -1:
-                    if num('V1') != ' - ': v1_sum += num('V1')
-                    ws['D' + str(out_index)] = st_row(num('V1'))
-                    ws['D' + str(out_index + 1)] = str(round(v1_sum, 2)).replace('.', ',')
-                    if num('V1') != ' - ': ws['H' + str(out_index)] = st_row(round(num('V1'), 2))
-                    ws['H' + str(out_index + 1)] = str(abs(round(v1_sum, 2))).replace('.', ',')
-                if data_indexes['M1'] != -1:
-                    if num('M1') != ' - ': m1_sum += num('M1')
-                    ws['E' + str(out_index)] = st_row(num('M1'))
-                    ws['E' + str(out_index + 1)] = str(round(m1_sum, 2)).replace('.', ',')
-                    if num('M1') != ' - ': ws['I' + str(out_index)] = st_row(num('M1'))
-                    ws['I' + str(out_index + 1)] = str(abs(round(m1_sum, 2))).replace('.', ',')
-                if data_indexes['V2'] != -1 and num('V2') != ' - ':
-                    if num('V2') != ' - ': v2_sum += num('V2')
-                    ws['F' + str(out_index)] = st_row(num('V2'))
-                    ws['F' + str(out_index + 1)] = str(round(v2_sum, 2)).replace('.', ',')
-                    if num('V2') != ' - ' and num('V1') != ' - ':ws['H' + str(out_index)] = st_row(abs(round(num('V2') - num('V1'), 2)))
-                    ws['H' + str(out_index + 1)] = str(abs(round(v2_sum - v1_sum, 2))).replace('.', ',')
-                if data_indexes['M2'] != -1:
-                    if num('M2') != ' - ': m2_sum += num('M2')
-                    ws['G' + str(out_index)] = st_row(num('M2'))
-                    ws['G' + str(out_index + 1)] = str(round(m2_sum, 2)).replace('.', ',')
-                    if num('M2') != ' - ' and num('M1') != ' - ': ws['I' + str(out_index)] = st_row(abs(round(num('M2') - num('M1'), 2)))
-                    ws['I' + str(out_index + 1)] = str(abs(round(m2_sum - m1_sum, 2))).replace('.', ',')
-                if data_indexes['Q'] != -1:
-                    if num('Q') != ' - ': q_sum += num('Q')
-                    ws['J' + str(out_index)] = st_row(num('Q'))
-                    ws['J' + str(out_index + 1)] = str(round(q_sum, 2)).replace('.', ',')
-                if data_indexes['Tн'] != -1:
-                    if float_time('Tн') != ' - ': vnr += float_time('Tн')
-                    ws['K' + str(out_index)] = st_row(float_time('Tн'))
-                    ws['K' + str(out_index + 1)] = str(round(vnr, 2)).replace('.', ',')
-                if data_indexes['Tн'] != -1:
-                    if float_time('Tн') != ' - ': vos += (24.0 - float_time('Tн'))
-                    ws['L' + str(out_index)] = st_row(round(24.0 - float_time('Tн'), 2))
-                    ws['L' + str(out_index + 1)] = str(round(vos, 2)).replace('.', ',')
+            if date_from == '':
+                date_from = curr_date
+            date_to = curr_date
+            ws.insert_rows(out_index)
 
-                out_index += 1
+            for i in range(1, 14):
+                thin = Side(border_style="thin", color="000000")
+                ws.cell(out_index, i).border = Border(top=thin, left=thin, right=thin, bottom=thin)
+                ws.cell(out_index, i).alignment = Alignment(horizontal="center", vertical="center")
+            ws['A' + str(out_index)] = str(curr_date.strftime("%d-%m-%Y"))
+            if data_indexes['t1'] != -1:
+                if num('t1') != ' - ': t1_avg += num('t1') 
+                ws['B' + str(out_index)] = st_row(num('t1'))
+            if data_indexes['t2'] != -1:
+                if num('t2') != ' - ': t2_avg += num('t2')
+                ws['C' + str(out_index)] = st_row(num('t2'))
+            if data_indexes['V1'] != -1:
+                if num('V1') != ' - ': v1_sum += num('V1')
+                ws['D' + str(out_index)] = st_row(num('V1'))
+                ws['D' + str(out_index + 1)] = str(round(v1_sum, 2)).replace('.', ',')
+                if num('V1') != ' - ': ws['H' + str(out_index)] = st_row(round(num('V1'), 2))
+                ws['H' + str(out_index + 1)] = str(abs(round(v1_sum, 2))).replace('.', ',')
+            if data_indexes['M1'] != -1:
+                if num('M1') != ' - ': m1_sum += num('M1')
+                ws['E' + str(out_index)] = st_row(num('M1'))
+                ws['E' + str(out_index + 1)] = str(round(m1_sum, 2)).replace('.', ',')
+                if num('M1') != ' - ': ws['I' + str(out_index)] = st_row(num('M1'))
+                ws['I' + str(out_index + 1)] = str(abs(round(m1_sum, 2))).replace('.', ',')
+            if data_indexes['V2'] != -1 and num('V2') != ' - ':
+                if num('V2') != ' - ': v2_sum += num('V2')
+                ws['F' + str(out_index)] = st_row(num('V2'))
+                ws['F' + str(out_index + 1)] = str(round(v2_sum, 2)).replace('.', ',')
+                if num('V2') != ' - ' and num('V1') != ' - ':ws['H' + str(out_index)] = st_row(abs(round(num('V2') - num('V1'), 2)))
+                ws['H' + str(out_index + 1)] = str(abs(round(v2_sum - v1_sum, 2))).replace('.', ',')
+            if data_indexes['M2'] != -1:
+                if num('M2') != ' - ': m2_sum += num('M2')
+                ws['G' + str(out_index)] = st_row(num('M2'))
+                ws['G' + str(out_index + 1)] = str(round(m2_sum, 2)).replace('.', ',')
+                if num('M2') != ' - ' and num('M1') != ' - ': ws['I' + str(out_index)] = st_row(abs(round(num('M2') - num('M1'), 2)))
+                ws['I' + str(out_index + 1)] = str(abs(round(m2_sum - m1_sum, 2))).replace('.', ',')
+            if data_indexes['Q'] != -1:
+                if num('Q') != ' - ': q_sum += num('Q')
+                ws['J' + str(out_index)] = st_row(num('Q'))
+                ws['J' + str(out_index + 1)] = str(round(q_sum, 2)).replace('.', ',')
+            if data_indexes['Tн'] != -1:
+                if float_time('Tн') != ' - ': vnr += float_time('Tн')
+                ws['K' + str(out_index)] = st_row(float_time('Tн'))
+                ws['K' + str(out_index + 1)] = str(round(vnr, 2)).replace('.', ',')
+            if data_indexes['Tн'] != -1:
+                if float_time('Tн') != ' - ': vos += (24.0 - float_time('Tн'))
+                ws['L' + str(out_index)] = st_row(round(24.0 - float_time('Tн'), 2))
+                ws['L' + str(out_index + 1)] = str(round(vos, 2)).replace('.', ',')
+
+            out_index += 1
             row_index += 1
 
         ws['B' + str(out_index + 1)] = round(t1_avg/(out_index - 17), 2)
@@ -227,12 +237,11 @@ class TMKParser:
         # Parse resoult table
         while file[1][sum_table_index][0].value != 'Дата':
             sum_table_index += 1
-        data_indexes, type = self.get_columns(file[1][sum_table_index], {'Время': -1, 't1': -1, 't2': -1,'V1': -1,'M1': -1,'V2': -1,'M2': -1, 'Q': -1, 'Tн': -1,'ВОС': -1, 'НС': -1})
+        data_indexes = self.get_columns(file[1][sum_table_index], {'Время': -1, 't1': -1, 't2': -1,'V1': -1,'M1': -1,'V2': -1,'M2': -1, 'Q': -1, 'Tн': -1,'ВОС': -1, 'НС': -1})
         summary_data = file[1][sum_table_index + 1]
 
         v1_start = 0; v2_start = 0; m1_start = 0; m2_start = 0; q_start = 0; vnr_start = 0; vos_start = 0
-        float_time_finnaly = lambda t: round(float(str(summary_data[data_indexes[t]].value).split(':')[0]) + (10 / 6) * float(str(summary_data[data_indexes[t]].value).split(':')[1]), 2) \
-                                        if '-' not in summary_data[data_indexes[t]].value else ' - ' if summary_data[data_indexes[t]].value != None else ' - '
+        float_time_finnaly = lambda t: self.time_conv(t, summary_data, data_indexes)
         num_finnaly = lambda t: self.num_def(t, summary_data, data_indexes)
         if num_finnaly('M1') != ' - ' and data_indexes['M1'] != -1:
             m1_start = num_finnaly('M1')
@@ -288,9 +297,9 @@ class TMKParser:
         ws[vos_col + str(sec_row + 1)] = str(round(vos, 2)).replace('.', ',')
 
         # Fill head data
-        ws['A1'] = str(ws['A1'].value).replace('май', get_month(datetime.now().strftime("%d-%m-%Y")))
-        ws['B3'] = date_from
-        ws['C3'] = date_to
+        ws['A1'] = str(ws['A1'].value).replace('май', get_month(datetime.strftime(date_to, "%d-%m-%Y")))
+        ws['B3'] = datetime.strftime(date_from, "%d-%m-%Y")
+        ws['C3'] = datetime.strftime(date_to, "%d-%m-%Y")
         ws['B4'] = datetime.now().strftime("%d-%m-%Y")
         ws['B5'] = rep_type
         ws['B6'] = head_data['consumer']
@@ -308,18 +317,20 @@ class TMKParser:
             str_rep = '_отопл'
 
         template.save(curr_dir + '/' + head_data['adress'].replace('/', 'к') + str_rep + '.xlsx')
-        report += curr_dir + '/' + head_data['adress'].replace('/', 'к') + str_rep +'.xlsx'
+        report += head_data['save_folder'] + '/' + head_data['adress'].replace('/', 'к') + str_rep +'.xlsx'
 
         return report + '\n'
 
 
-    def __call__(self, date_from = '01-01-2023', date_to = '18-01-2023'):
+    def __call__(self):
         report = '\tТМК\n'
 
         for file in self.my_parsing_files:
             rep_type = '1'
-            if 'ГВС' in file[0].upper() or 'Тепловая система 2' == file[1]['D9'].value:
+            if 'ГВС' in str(file[0].upper()) or 'Тепловая система 2' == str(file[1]['D9'].value) or 'Тепловой ввод №2' in str(file[1]['D6'].value):
                 rep_type = '2'
+            report += self.build_xls(file, rep_type) + '\n' 
 
-            report += self.build_xls(file, rep_type, date_from, date_to) + '\n'
+            #if 'Тепловой ввод №2' in str(file[1]['AD6'].value):
+            #    report += self.build_xls(file, rep_type, 30) + '\n' 
         return report

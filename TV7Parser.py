@@ -75,12 +75,19 @@ class TV7Parser:
 
         return heat_cols
 
+    def num_from_data(self, t, summary_data, data_indexes):
+        if summary_data[data_indexes[t]].value != None:
+            if '-' not in str(summary_data[data_indexes[t]].value):
+                return round(float(summary_data[data_indexes[t]].value), 2)
+            else:
+                return ' - '
+        else: 
+            return ' - '
 
-    def build_xls(self, file, rep_type,  template, data_indexes=[], head_data={}, date_from='01-01-2023', date_to='18-01-2023', start_read_index=1, start_out_index=18, summs=[0,0,0,\
+    def build_xls(self, file, rep_type,  template, data_indexes=[], head_data={}, start_read_index=1, start_out_index=18, summs=[0,0,0,\
                                                                                                                                                 0,0,0,\
-                                                                                                                                                0,0,0, ''],a_resoul_flag=False, date_format='TV7'):
+                                                                                                                                                0,0,0, ''],a_resoul_flag=False, date_format='TV7', date_from = '',date_to = ''):
         report = '' # Out text, will be printed into my textBrowser
-        file_name = file[0].split('/')[len(file[0].split('/')) - 1].split('.xlsx')[0]
     
         if file[0].split('/')[len(file[0].split('/')) - 1]:
             template.title = file[0].split('/')[len(file[0].split('/')) - 1]
@@ -92,7 +99,7 @@ class TV7Parser:
         for row in file[1].iter_rows(min_row=row_index):
             num = lambda t: round(float(row[data_indexes[t]].value), 2) if row[data_indexes[t]].value != None else ' - '
             st_row = lambda n: str(n).replace('.', ',')
-            
+            curr_date = ''
             if 'Итого:' == row[0].value or 'Итого/Средн' == row[0].value:
                 break
 
@@ -104,70 +111,71 @@ class TV7Parser:
             if len(tmp_date) < 3 or len(str(tmp_date[1])) != 2:
                 row_index += 1
                 continue
-
+            # Parse dates
             if date_format == 'VKT':
                 curr_date = datetime.strptime(tmp_date[2].replace(' ', '') + '-' + tmp_date[1].replace(' ', '') + '-' + tmp_date[0].split(' ')[0].replace(' ', ''), "%d-%m-%Y").date()
             else:
                 curr_date = datetime.strptime(tmp_date[0] + '-' + tmp_date[1] + '-' + '20' + tmp_date[2].split(' ')[0], "%d-%m-%Y").date()
-
-            if (curr_date >= datetime.strptime(date_from, "%d-%m-%Y").date() and\
-                curr_date <= datetime.strptime(date_to, "%d-%m-%Y").date()):
-                ws.insert_rows(out_index)
-                for i in range(1, 14):
-                    thin = Side(border_style="thin", color="000000")
-                    ws.cell(out_index, i).border = Border(top=thin, left=thin, right=thin, bottom=thin)
-                    ws.cell(out_index, i).alignment = Alignment(horizontal="center", vertical="center")
-                ws['A' + str(out_index)] = str(curr_date.strftime("%d-%m-%Y"))
-                if data_indexes['t1'] != -1:
-                    if num('t1') != ' - ': t1_avg += num('t1') 
-                    ws['B' + str(out_index)] = st_row(num('t1'))
-                if data_indexes['t2'] != -1:
-                    if num('t2') != ' - ': t2_avg += num('t2')
-                    ws['C' + str(out_index)] = st_row(num('t2'))
-                if data_indexes['V1'] != -1:
-                    if num('V1') != ' - ': v1_sum += num('V1')
-                    ws['D' + str(out_index)] = st_row(num('V1'))
-                    ws['D' + str(out_index + 1)] = str(round(v1_sum, 2)).replace('.', ',')
-                    ws['H' + str(out_index)] = st_row(round(num('V1'), 2))
-                    ws['H' + str(out_index + 1)] = str(abs(round(v1_sum, 2))).replace('.', ',')
-                if data_indexes['M1'] != -1:
-                    if num('M1') != ' - ': m1_sum += num('M1')
-                    ws['E' + str(out_index)] = st_row(num('M1'))
-                    ws['E' + str(out_index + 1)] = str(round(m1_sum, 2)).replace('.', ',')
-                    ws['I' + str(out_index)] = st_row(num('M1'))
-                    ws['I' + str(out_index + 1)] = str(abs(round(m1_sum, 2))).replace('.', ',')
-                if data_indexes['V2'] != -1 and num('V2') != ' - ':
-                    v2_sum += num('V2')
-                    ws['F' + str(out_index)] = st_row(num('V2'))
-                    ws['F' + str(out_index + 1)] = str(round(v2_sum, 2)).replace('.', ',')
-                    ws['H' + str(out_index)] = st_row(abs(round(num('V2') - num('V1'), 2)))
-                    ws['H' + str(out_index + 1)] = str(abs(round(v2_sum - v1_sum, 2))).replace('.', ',')
-                if data_indexes['M2'] != -1:
-                    if num('M2') != ' - ': m2_sum += num('M2')
-                    ws['G' + str(out_index)] = st_row(num('M2'))
-                    ws['G' + str(out_index + 1)] = str(round(m2_sum, 2)).replace('.', ',')
-                    ws['I' + str(out_index)] = st_row(abs(round(num('M2') - num('M1'), 2)))
-                    ws['I' + str(out_index + 1)] = str(abs(round(m2_sum - m1_sum, 2))).replace('.', ',')
-                if data_indexes['Q'] != -1:
-                    if num('Q') != ' - ': q_sum += num('Q')
-                    ws['J' + str(out_index)] = st_row(num('Q'))
-                    ws['J' + str(out_index + 1)] = str(round(q_sum, 2)).replace('.', ',')
-                if data_indexes['ВНР'] != -1:
-                    if num('ВНР') != ' - ': vnr += num('ВНР')
-                    ws['K' + str(out_index)] = st_row(num('ВНР'))
-                    ws['K' + str(out_index + 1)] = str(round(vnr, 2)).replace('.', ',')
-                if data_indexes['ВНР'] != -1:
-                    if num('ВНР') != ' - ': vos += (24.0 - num('ВНР'))
-                    ws['L' + str(out_index)] = st_row(24.0 - num('ВНР'))
-                    ws['L' + str(out_index + 1)] = str(round(vos, 2)).replace('.', ',')
-
-                if data_indexes['НС'] != -1 and row[data_indexes['НС']].value != None:
-                    ws['M' + str(out_index)] = st_row(row[data_indexes['НС']].value)
-                    if str(row[data_indexes['НС']].value) not in sum_err:
-                        sum_err += row[data_indexes['НС']].value
-                    ws['M' + str(out_index + 1)] = sum_err
-
-                out_index += 1
+            # Fill the start and end dates
+            if date_from == '':
+                date_from = curr_date
+            if str(curr_date) != '':
+                date_to = curr_date
+            # Fill main table
+            ws.insert_rows(out_index)
+            for i in range(1, 14):
+                thin = Side(border_style="thin", color="000000")
+                ws.cell(out_index, i).border = Border(top=thin, left=thin, right=thin, bottom=thin)
+                ws.cell(out_index, i).alignment = Alignment(horizontal="center", vertical="center")
+            ws['A' + str(out_index)] = str(curr_date.strftime("%d-%m-%Y"))
+            if data_indexes['t1'] != -1:
+                if num('t1') != ' - ': t1_avg += num('t1') 
+                ws['B' + str(out_index)] = st_row(num('t1'))
+            if data_indexes['t2'] != -1:
+                if num('t2') != ' - ': t2_avg += num('t2')
+                ws['C' + str(out_index)] = st_row(num('t2'))
+            if data_indexes['V1'] != -1:
+                if num('V1') != ' - ': v1_sum += num('V1')
+                ws['D' + str(out_index)] = st_row(num('V1'))
+                ws['D' + str(out_index + 1)] = str(round(v1_sum, 2)).replace('.', ',')
+                ws['H' + str(out_index)] = st_row(round(num('V1'), 2))
+                ws['H' + str(out_index + 1)] = str(abs(round(v1_sum, 2))).replace('.', ',')
+            if data_indexes['M1'] != -1:
+                if num('M1') != ' - ': m1_sum += num('M1')
+                ws['E' + str(out_index)] = st_row(num('M1'))
+                ws['E' + str(out_index + 1)] = str(round(m1_sum, 2)).replace('.', ',')
+                ws['I' + str(out_index)] = st_row(num('M1'))
+                ws['I' + str(out_index + 1)] = str(abs(round(m1_sum, 2))).replace('.', ',')
+            if data_indexes['V2'] != -1 and num('V2') != ' - ':
+                v2_sum += num('V2')
+                ws['F' + str(out_index)] = st_row(num('V2'))
+                ws['F' + str(out_index + 1)] = str(round(v2_sum, 2)).replace('.', ',')
+                ws['H' + str(out_index)] = st_row(abs(round(num('V2') - num('V1'), 2)))
+                ws['H' + str(out_index + 1)] = str(abs(round(v2_sum - v1_sum, 2))).replace('.', ',')
+            if data_indexes['M2'] != -1:
+                if num('M2') != ' - ': m2_sum += num('M2')
+                ws['G' + str(out_index)] = st_row(num('M2'))
+                ws['G' + str(out_index + 1)] = str(round(m2_sum, 2)).replace('.', ',')
+                ws['I' + str(out_index)] = st_row(abs(round(num('M2') - num('M1'), 2)))
+                ws['I' + str(out_index + 1)] = str(abs(round(m2_sum - m1_sum, 2))).replace('.', ',')
+            if data_indexes['Q'] != -1:
+                if num('Q') != ' - ': q_sum += num('Q')
+                ws['J' + str(out_index)] = st_row(num('Q'))
+                ws['J' + str(out_index + 1)] = str(round(q_sum, 2)).replace('.', ',')
+            if data_indexes['ВНР'] != -1:
+                if num('ВНР') != ' - ': vnr += num('ВНР')
+                ws['K' + str(out_index)] = st_row(num('ВНР'))
+                ws['K' + str(out_index + 1)] = str(round(vnr, 2)).replace('.', ',')
+            if data_indexes['ВНР'] != -1:
+                if num('ВНР') != ' - ': vos += (24.0 - num('ВНР'))
+                ws['L' + str(out_index)] = st_row(24.0 - num('ВНР'))
+                ws['L' + str(out_index + 1)] = str(round(vos, 2)).replace('.', ',')
+            if data_indexes['НС'] != -1 and row[data_indexes['НС']].value != None:
+                ws['M' + str(out_index)] = st_row(row[data_indexes['НС']].value)
+                if str(row[data_indexes['НС']].value) not in sum_err:
+                    sum_err += row[data_indexes['НС']].value
+                ws['M' + str(out_index + 1)] = sum_err
+            out_index += 1
             row_index += 1
 
         if a_resoul_flag == True:
@@ -189,36 +197,41 @@ class TV7Parser:
 
                 data_indexes = self.get_columns(file[1][row_index + row_shift])
                 summary_data = file[1][row_index + row_shift + 3]
+                if summary_data[0].value == None:
+                    if file[1][row_index + row_shift + 2][0].value != None:
+                        summary_data = file[1][row_index + row_shift + 2]
+                    else:
+                        report += 'Не найдена таблица с итогами в отчете ВКТ: ' + head_data['factory_num'] + '\n'
             else:
                 data_indexes = self.get_columns(file[1][row_index + 3])
                 summary_data = file[1][row_index + 9]
             
             v1_start = 0; v2_start = 0; m1_start = 0; m2_start = 0; q_start = 0; vnr_start = 0; vos_start = 0
-            num_finnaly = lambda t: round(float(summary_data[data_indexes[t]].value), 2) if summary_data[data_indexes[t]].value != None else ' - '
-            if summary_data[data_indexes['M1']] != None and data_indexes['M1'] != -1:
+            num_finnaly = lambda t: self.num_from_data(t, summary_data, data_indexes)
+            if num_finnaly('M1') != ' - ' and data_indexes['M1'] != -1:
                 m1_start = num_finnaly('M1') - m1_sum
                 m1_sum = num_finnaly('M1')
-            if summary_data[data_indexes['M2']] != None and data_indexes['M2'] != -1:
+            if num_finnaly('M2') != ' - ' and data_indexes['M2'] != -1:
                 m2_start = num_finnaly('M2') - m2_sum
                 m2_sum = num_finnaly('M2')
-            if summary_data[data_indexes['V1']] != None and data_indexes['V1'] != -1:
+            if num_finnaly('V1') != ' - ' and data_indexes['V1'] != -1:
                 v1_start = num_finnaly('V1') - v1_sum
                 v1_sum = num_finnaly('V1')
-            if summary_data[data_indexes['V2']] != None and data_indexes['V2'] != -1:
+            if num_finnaly('V2') != ' - ' and data_indexes['V2'] != -1:
                 v2_start = num_finnaly('V2') - v2_sum
                 v2_sum = num_finnaly('V2')
-            if summary_data[data_indexes['Q']] != None and data_indexes['Q'] != -1:
+            if num_finnaly('Q') != ' - ' and data_indexes['Q'] != -1:
                 q_start = num_finnaly('Q') - q_sum
                 q_sum = num_finnaly('Q')
-            if summary_data[data_indexes['ВНР']] != None and data_indexes['ВНР'] != -1:
+            if num_finnaly('ВНР') != ' - ' and data_indexes['ВНР'] != -1:
                 vnr_start = num_finnaly('ВНР') - vnr
                 vnr = num_finnaly('ВНР')
-            if summary_data[data_indexes['ВОС']] != None and data_indexes['ВОС'] != -1:
+            if num_finnaly('ВОС') != ' - ' and data_indexes['ВОС'] != -1:
                 vos_start = num_finnaly('ВОС') - vos
                 vos = num_finnaly('ВОС')
 
             sec_row += 3
-            # A resoult table   
+            # Fill resoult table   
             ws['A' + str(sec_row)] = date_from  
             ws['A' + str(sec_row + 1)] = date_to
             ws['B' + str(sec_row)] = str(round(m1_start, 2)).replace('.', ',')
@@ -252,7 +265,7 @@ class TV7Parser:
             ws[vos_col + str(sec_row + 1)] = str(round(vos, 2)).replace('.', ',')
 
         # Fill head data
-        ws['A1'] = str(ws['A1'].value).replace('май', get_month(datetime.now().strftime("%d-%m-%Y")))
+        ws['A1'] = str(ws['A1'].value).replace('май', get_month(str(date_to)[8:10] + '-' + str(date_to)[5:7] + '-' + str(date_to)[0:4]))
         ws['B3'] = date_from
         ws['C3'] = date_to
         ws['B4'] = datetime.now().strftime("%d-%m-%Y")
@@ -272,10 +285,10 @@ class TV7Parser:
         
         template.save(curr_dir + '/' + head_data['adress'].replace('/', 'к') + str_rep + '.xlsx')
         report += curr_dir + '/' + head_data['adress'].replace('/', 'к') + str_rep +'.xlsx'
-        return [report, row_index, out_index, [t1_avg, t2_avg, m1_sum, m2_sum, v1_sum, v2_sum, q_sum, vnr, vos, sum_err]]
+        return [report, row_index, out_index, [t1_avg, t2_avg, m1_sum, m2_sum, v1_sum, v2_sum, q_sum, vnr, vos, sum_err], date_from, date_to]
 
 
-    def __call__(self, date_from = '01-01-2023', date_to = '18-01-2023'):
+    def __call__(self):
         summary_rep = '\tТВ - 7\n'
 
         for file in self.my_parsing_files:
@@ -299,7 +312,7 @@ class TV7Parser:
                 move_index += 1
 
             template = load_workbook(self.my_dir + '\Templates\VEC_Template.xlsx',  read_only=False, data_only=False)
-            report, row_inx, out_row_indx, summs = self.build_xls(file, rep_type, template, data_indexes, head_data, date_from, date_to, start_read_index=move_index, a_resoul_flag=False)
+            report, row_inx, out_row_indx, summs, date_from, date_to = self.build_xls(file, rep_type, template, data_indexes, head_data, start_read_index=move_index, a_resoul_flag=False)
 
             move_index = 10
             for row in file[1].iter_rows(min_row=row_inx+10):
@@ -319,7 +332,7 @@ class TV7Parser:
 
             data_indexes = self.get_columns(file[1][row_inx+move_index])
             template = load_workbook(report,  read_only=False, data_only=False)
-            report, row_inx, out_row_indx, summs = self.build_xls(file, rep_type, template, data_indexes, head_data, date_from, date_to, row_inx + move_index, out_row_indx, summs, True)
-            summary_rep += '\n' + report + '\n'
+            report, row_inx, out_row_indx, summs, date_from, date_to = self.build_xls(file, rep_type, template, data_indexes, head_data, row_inx + move_index, out_row_indx, summs, True, date_from=date_from, date_to=date_to)
+            summary_rep += '\n' + report.replace(self.save_dir, '') + '\n'
 
         return summary_rep

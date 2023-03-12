@@ -72,7 +72,7 @@ class VKTParser:
         return nums_of_data
 
 
-    def build_xls_by_txt(self, file, date_from, date_to):
+    def build_xls_by_txt(self, file, date_from='', date_to=''):
         report = ''
         template = load_workbook(self.my_dir + '\Templates\VEC_Template.xlsx', data_only=False)  # Template xlsx file
         if file[0].split('/')[len(file[0].split('/')) - 1]:
@@ -117,80 +117,78 @@ class VKTParser:
                 
                 tmp_date = line_list[0].split('/')
                 curr_date = datetime.strptime(tmp_date[0] + '-' + tmp_date[1] + '-' + '20' + tmp_date[2], "%d-%m-%Y").date()
-                if (curr_date >= datetime.strptime(date_from, "%d-%m-%Y").date() and\
-                    curr_date <= datetime.strptime(date_to, "%d-%m-%Y").date()):
-                    num = lambda st: float(line_list[indexes[st]].replace(' ', ''))
-                    # Inserting new row and styling it
-                    ws.insert_rows(row_number)
-                    for i in range(1, 14):
-                        thin = Side(border_style="thin", color="000000")
-                        ws.cell(row_number, i).border = Border(top=thin, left=thin, right=thin, bottom=thin)
-                        ws.cell(row_number, i).alignment = Alignment(horizontal="center", vertical="center")
-                    # A main table
-                    ws['A' + str(row_number)] = str(curr_date.strftime("%d-%m-%Y"))      #Date
-                    if indexes['t1'] == -1: ws['B' + str(row_number)] = ' - ' 
-                    else: 
-                        ws['B' + str(row_number)] = str(num('t1')).replace('.', ',')
-                        t1_avg += num('t1')   #T1
-                    if indexes['t2'] == -1: ws['C' + str(row_number)] = ' - ' 
-                    else: 
-                        ws['C' + str(row_number)] = str(num('t2')).replace('.', ',')
-                        t2_avg += num('t2')   #T2
-                    if indexes['V1'] == -1: ws['D' + str(row_number)] = ' - ' 
-                    else: 
-                        ws['D' + str(row_number)] = str(num('V1')).replace('.', ',')
-                        v1_sum += float(num('V1'))
-                        ws['D' + str(row_number+1)] = str(round(v1_sum, 2)).replace('.', ',')
-                    if indexes['M1'] == -1: ws['E' + str(row_number)] = ' - ' 
-                    else: 
-                        ws['E' + str(row_number)] = str(num('M1')).replace('.', ',')
-                        m1_sum += num('M1')
-                        ws['E' + str(row_number+1)] = str(round(m1_sum, 2)).replace('.', ',')
-                    if indexes['V2'] == -1: ws['F' + str(row_number)] = ' - ' 
-                    else: 
-                        ws['F' + str(row_number)] = str(num('V2')).replace('.', ',')
-                        v2_sum += num('V2')
-                        ws['F' + str(row_number + 1)] = str(round(v2_sum, 2)).replace('.', ',')
-                    if indexes['M2'] == -1: ws['G' + str(row_number)] = ' - ' 
-                    else: 
-                        ws['G' + str(row_number)] = str(num('M2')).replace('.', ',')
-                        m2_sum += num('M2')
-                        ws['G' + str(row_number + 1)] = str(round(m2_sum, 2)).replace('.', ',')
-                    if indexes['M2'] == -1 or indexes['V2'] == -1:
-                        ws['H' + str(row_number)] = ws['D' + str(row_number)].value
-                        ws['I' + str(row_number)] = ws['E' + str(row_number)].value
-                        dv_sum = v1_sum
-                        dm_sum = m1_sum
-                        ws['H' + str(row_number + 1)] = dv_sum
-                        ws['I' + str(row_number + 1)] = dm_sum
-                    else: 
-                        ws['H' + str(row_number)] = str(round(abs(num('V2') - num('V1')), 2)).replace('.', ',')
-                        dv_sum += round(abs(num('V2') - num('V1')), 2)
-                        ws['I' + str(row_number)] = str(round(abs(num('M2') - num('M1')), 2)).replace('.', ',')
-                        dm_sum += round(abs(num('M2') - num('M1')), 2)
-                        ws['H' + str(row_number + 1)] = dv_sum
-                        ws['I' + str(row_number + 1)] = dm_sum
-                    if indexes['Qо'] == -1: ws['J' + str(row_number)] = ' - ' 
-                    else: 
-                        ws['J' + str(row_number)] = str(num('Qо')).replace('.', ',')
-                        q_sum += num('Qо')
-                        ws['J' + str(row_number + 1)] = str(round(q_sum, 2)).replace('.', ',')
-                    if indexes['BНP'] == -1: ws['K' + str(row_number)] = ' - ' 
-                    else: 
-                        ws['K' + str(row_number)] = str(num('BНP')).replace('.', ',')
-                        vnr += num('BНP')
-                        ws['K' + str(row_number + 1)] = str(round(vnr, 2)).replace('.', ',')
-                    if indexes['BOC'] == -1: ws['L' + str(row_number)] = ' - ' 
-                    else: 
-                        ws['L' + str(row_number)] = str(num('BOC')).replace('.', ',')
-                        vos += num('BOC')
-                        ws['L' + str(row_number + 1)] = str(round(vos, 2)).replace('.', ',')
-                    ws['M' + str(row_number)] = ' - ' #str(float(line_list[8].replace(' ', '')))
-                    row_number += 1
-                    index += 1
-                else:
-                    index += 1
-                    continue
+                if date_from == '':
+                    date_from = curr_date
+                date_to = curr_date
+                num = lambda st: float(line_list[indexes[st]].replace(' ', ''))
+                # Inserting new row and styling it
+                ws.insert_rows(row_number)
+                for i in range(1, 14):
+                    thin = Side(border_style="thin", color="000000")
+                    ws.cell(row_number, i).border = Border(top=thin, left=thin, right=thin, bottom=thin)
+                    ws.cell(row_number, i).alignment = Alignment(horizontal="center", vertical="center")
+                # A main table
+                ws['A' + str(row_number)] = str(curr_date.strftime("%d-%m-%Y"))      #Date
+                if indexes['t1'] == -1: ws['B' + str(row_number)] = ' - ' 
+                else: 
+                    ws['B' + str(row_number)] = str(num('t1')).replace('.', ',')
+                    t1_avg += num('t1')   #T1
+                if indexes['t2'] == -1: ws['C' + str(row_number)] = ' - ' 
+                else: 
+                    ws['C' + str(row_number)] = str(num('t2')).replace('.', ',')
+                    t2_avg += num('t2')   #T2
+                if indexes['V1'] == -1: ws['D' + str(row_number)] = ' - ' 
+                else: 
+                    ws['D' + str(row_number)] = str(num('V1')).replace('.', ',')
+                    v1_sum += float(num('V1'))
+                    ws['D' + str(row_number+1)] = str(round(v1_sum, 2)).replace('.', ',')
+                if indexes['M1'] == -1: ws['E' + str(row_number)] = ' - ' 
+                else: 
+                    ws['E' + str(row_number)] = str(num('M1')).replace('.', ',')
+                    m1_sum += num('M1')
+                    ws['E' + str(row_number+1)] = str(round(m1_sum, 2)).replace('.', ',')
+                if indexes['V2'] == -1: ws['F' + str(row_number)] = ' - ' 
+                else: 
+                    ws['F' + str(row_number)] = str(num('V2')).replace('.', ',')
+                    v2_sum += num('V2')
+                    ws['F' + str(row_number + 1)] = str(round(v2_sum, 2)).replace('.', ',')
+                if indexes['M2'] == -1: ws['G' + str(row_number)] = ' - ' 
+                else: 
+                    ws['G' + str(row_number)] = str(num('M2')).replace('.', ',')
+                    m2_sum += num('M2')
+                    ws['G' + str(row_number + 1)] = str(round(m2_sum, 2)).replace('.', ',')
+                if indexes['M2'] == -1 or indexes['V2'] == -1:
+                    ws['H' + str(row_number)] = ws['D' + str(row_number)].value
+                    ws['I' + str(row_number)] = ws['E' + str(row_number)].value
+                    dv_sum = v1_sum
+                    dm_sum = m1_sum
+                    ws['H' + str(row_number + 1)] = dv_sum
+                    ws['I' + str(row_number + 1)] = dm_sum
+                else: 
+                    ws['H' + str(row_number)] = str(round(abs(num('V2') - num('V1')), 2)).replace('.', ',')
+                    dv_sum += round(abs(num('V2') - num('V1')), 2)
+                    ws['I' + str(row_number)] = str(round(abs(num('M2') - num('M1')), 2)).replace('.', ',')
+                    dm_sum += round(abs(num('M2') - num('M1')), 2)
+                    ws['H' + str(row_number + 1)] = dv_sum
+                    ws['I' + str(row_number + 1)] = dm_sum
+                if indexes['Qо'] == -1: ws['J' + str(row_number)] = ' - ' 
+                else: 
+                    ws['J' + str(row_number)] = str(num('Qо')).replace('.', ',')
+                    q_sum += num('Qо')
+                    ws['J' + str(row_number + 1)] = str(round(q_sum, 2)).replace('.', ',')
+                if indexes['BНP'] == -1: ws['K' + str(row_number)] = ' - ' 
+                else: 
+                    ws['K' + str(row_number)] = str(num('BНP')).replace('.', ',')
+                    vnr += num('BНP')
+                    ws['K' + str(row_number + 1)] = str(round(vnr, 2)).replace('.', ',')
+                if indexes['BOC'] == -1: ws['L' + str(row_number)] = ' - ' 
+                else: 
+                    ws['L' + str(row_number)] = str(num('BOC')).replace('.', ',')
+                    vos += num('BOC')
+                    ws['L' + str(row_number + 1)] = str(round(vos, 2)).replace('.', ',')
+                ws['M' + str(row_number)] = ' - ' #str(float(line_list[8].replace(' ', '')))
+                row_number += 1
+                index += 1
             
             if indexes['t1'] != -1:
                 ws['B' + str(row_number+ 1)] = str(round(t1_avg / (index-17), 2)).replace('.', ',')
@@ -247,11 +245,11 @@ class VKTParser:
         if input_type == '1':
             out_type = '_отопл'
         template.save(curr_dir + '/' + head_data['adress'].replace('/', 'к') + out_type + '.xlsx')
-        report += curr_dir + '/' + head_data['adress'].replace('/', 'к') + out_type + '.xlsx'+ '\n\n'
+        report += head_data['save_folder'] + '/' + head_data['adress'].replace('/', 'к') + out_type + '.xlsx'+ '\n\n'
         return report
 
 
-    def build_xls_by_xls(self, file, date_from, date_to):
+    def build_xls_by_xls(self, file):
         tv7 = TV7Parser({'ТВ-7': []}, self.my_dir, self.save_dir)
         report = ''
         rep_type = '1'
@@ -284,20 +282,20 @@ class VKTParser:
             move_index += 1
 
             template = load_workbook(self.my_dir + '\Templates\VEC_Template.xlsx',  read_only=False, data_only=False)
-            report, row_inx, out_row_indx, summs = tv7.build_xls(file, rep_type, template, data_indexes, head_data, date_from, date_to, start_read_index=move_index, a_resoul_flag=True, date_format='VKT')
+            report, row_inx, out_row_indx, summs, date_from, date_to = tv7.build_xls(file, rep_type, template, data_indexes, head_data, start_read_index=move_index, a_resoul_flag=True, date_format='VKT')
         if '\n' not in report:
             report += '\n'
         return report
 
 
     def __call__(self, date_from = '01-01-2023', date_to = '18-01-2023'):
-        report = '\tВКТ:\n' # Window print
+        report = '\tВКТ\n' # Window print
 
         for file in self.my_parsing_files:
             if '.txt' in file[0]:
-                report += self.build_xls_by_txt(file, date_from, date_to)
+                report += self.build_xls_by_txt(file)
             elif '.xlsx' in file[0]:
-                report += self.build_xls_by_xls(file, date_from, date_to)
+                report += self.build_xls_by_xls(file)
             report += '\n'
 
         return report

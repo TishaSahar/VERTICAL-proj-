@@ -80,7 +80,9 @@ class VzletParser:
         return heat_cols
 
      
-    def build_xls(self, file, rep_type, date_from = '01-01-2023', date_to = '18-01-2023'):
+    def build_xls(self, file, rep_type):
+        date_from = ''
+        date_to = ''
         report = ''
         template = load_workbook(self.my_dir + '\Templates\VEC_Template.xlsx',  read_only=False, data_only=False)  # Template xlsx file  
         file_name = file[0].split('/')[len(file[0].split('/')) - 1].split('.xlsx')[0]
@@ -106,63 +108,65 @@ class VzletParser:
                 break
             
             curr_date = datetime.date(row[0].value)
-            if (curr_date >= datetime.strptime(date_from, "%d-%m-%Y").date() and\
-                curr_date <= datetime.strptime(date_to, "%d-%m-%Y").date()):
-                ws.insert_rows(out_index)
-                for i in range(1, 14):
-                    thin = Side(border_style="thin", color="000000")
-                    ws.cell(out_index, i).border = Border(top=thin, left=thin, right=thin, bottom=thin)
-                    ws.cell(out_index, i).alignment = Alignment(horizontal="center", vertical="center")
-                ws['A' + str(out_index)] = str(curr_date.strftime("%d-%m-%Y"))
-                if data_indexes['t1'] != -1:
-                    if num('t1') != ' - ': t1_avg += num('t1') 
-                    ws['B' + str(out_index)] = st_row(num('t1'))
-                if data_indexes['t2'] != -1:
-                    if num('t2') != ' - ': t2_avg += num('t2')
-                    ws['C' + str(out_index)] = st_row(num('t2'))
-                if data_indexes['V1'] != -1:
-                    if num('V1') != ' - ': v1_sum += num('V1')
-                    ws['D' + str(out_index)] = st_row(num('V1'))
-                    ws['D' + str(out_index + 1)] = str(round(v1_sum, 2)).replace('.', ',')
-                    ws['H' + str(out_index)] = st_row(round(num('V1'), 2))
-                    ws['H' + str(out_index + 1)] = str(abs(round(v1_sum, 2))).replace('.', ',')
-                if data_indexes['M1'] != -1:
-                    if num('M1') != ' - ': m1_sum += num('M1')
-                    ws['E' + str(out_index)] = st_row(num('M1'))
-                    ws['E' + str(out_index + 1)] = str(round(m1_sum, 2)).replace('.', ',')
-                    ws['I' + str(out_index)] = st_row(num('M1'))
-                    ws['I' + str(out_index + 1)] = str(abs(round(m1_sum, 2))).replace('.', ',')
-                if data_indexes['V2'] != -1 and num('V2') != ' - ':
-                    v2_sum += num('V2')
-                    ws['F' + str(out_index)] = st_row(num('V2'))
-                    ws['F' + str(out_index + 1)] = str(round(v2_sum, 2)).replace('.', ',')
-                    if num('V1') != ' - ': ws['H' + str(out_index)] = st_row(abs(round(num('V2') - num('V1'), 2))) 
-                    ws['H' + str(out_index + 1)] = str(abs(round(v2_sum - v1_sum, 2))).replace('.', ',')
-                if data_indexes['M2'] != -1 and num('M2') != ' - ':
-                    m2_sum += num('M2')
-                    ws['G' + str(out_index)] = st_row(num('M2'))
-                    ws['G' + str(out_index + 1)] = str(round(m2_sum, 2)).replace('.', ',')
-                    if num('M1') != ' - ': ws['I' + str(out_index)] = st_row(abs(round(num('M2') - num('M1'), 2))) 
-                    ws['I' + str(out_index + 1)] = str(abs(round(m2_sum - m1_sum, 2))).replace('.', ',')
-                if data_indexes['Q'] != -1 and num('Q') != ' - ':
-                    q_sum += num('Q')
-                    ws['J' + str(out_index)] = st_row(num('Q'))
-                    ws['J' + str(out_index + 1)] = str(round(q_sum, 2)).replace('.', ',')
-                if data_indexes['Т, ч'] != -1 and num('Т, ч') != ' - ': 
-                    vnr += num('Т, ч')
-                    ws['K' + str(out_index)] = st_row(num('Т, ч'))
-                    ws['K' + str(out_index + 1)] = str(round(vnr, 2)).replace('.', ',')
-                    vos += (24.0 - num('Т, ч'))
-                    ws['L' + str(out_index)] = st_row(round(24.0 - num('Т, ч'), 2))
-                    ws['L' + str(out_index + 1)] = str(round(vos, 2)).replace('.', ',')
-                else:
-                    vnr += 24
-                    ws['K' + str(out_index)] = st_row(24.0)
-                    ws['K' + str(out_index + 1)] = str(round(vnr, 2)).replace('.', ',')
-                    vos += 0
-                    ws['L' + str(out_index)] = st_row(0)
-                    ws['L' + str(out_index + 1)] = str(round(vos, 2)).replace('.', ',')
-                out_index += 1
+            if date_from == '':
+                date_from = curr_date
+            date_to = curr_date
+
+            ws.insert_rows(out_index)
+            for i in range(1, 14):
+                thin = Side(border_style="thin", color="000000")
+                ws.cell(out_index, i).border = Border(top=thin, left=thin, right=thin, bottom=thin)
+                ws.cell(out_index, i).alignment = Alignment(horizontal="center", vertical="center")
+            ws['A' + str(out_index)] = str(curr_date.strftime("%d-%m-%Y"))
+            if data_indexes['t1'] != -1:
+                if num('t1') != ' - ': t1_avg += num('t1') 
+                ws['B' + str(out_index)] = st_row(num('t1'))
+            if data_indexes['t2'] != -1:
+                if num('t2') != ' - ': t2_avg += num('t2')
+                ws['C' + str(out_index)] = st_row(num('t2'))
+            if data_indexes['V1'] != -1:
+                if num('V1') != ' - ': v1_sum += num('V1')
+                ws['D' + str(out_index)] = st_row(num('V1'))
+                ws['D' + str(out_index + 1)] = str(round(v1_sum, 2)).replace('.', ',')
+                ws['H' + str(out_index)] = st_row(round(num('V1'), 2))
+                ws['H' + str(out_index + 1)] = str(abs(round(v1_sum, 2))).replace('.', ',')
+            if data_indexes['M1'] != -1:
+                if num('M1') != ' - ': m1_sum += num('M1')
+                ws['E' + str(out_index)] = st_row(num('M1'))
+                ws['E' + str(out_index + 1)] = str(round(m1_sum, 2)).replace('.', ',')
+                ws['I' + str(out_index)] = st_row(num('M1'))
+                ws['I' + str(out_index + 1)] = str(abs(round(m1_sum, 2))).replace('.', ',')
+            if data_indexes['V2'] != -1 and num('V2') != ' - ':
+                v2_sum += num('V2')
+                ws['F' + str(out_index)] = st_row(num('V2'))
+                ws['F' + str(out_index + 1)] = str(round(v2_sum, 2)).replace('.', ',')
+                if num('V1') != ' - ': ws['H' + str(out_index)] = st_row(abs(round(num('V2') - num('V1'), 2))) 
+                ws['H' + str(out_index + 1)] = str(abs(round(v2_sum - v1_sum, 2))).replace('.', ',')
+            if data_indexes['M2'] != -1 and num('M2') != ' - ':
+                m2_sum += num('M2')
+                ws['G' + str(out_index)] = st_row(num('M2'))
+                ws['G' + str(out_index + 1)] = str(round(m2_sum, 2)).replace('.', ',')
+                if num('M1') != ' - ': ws['I' + str(out_index)] = st_row(abs(round(num('M2') - num('M1'), 2))) 
+                ws['I' + str(out_index + 1)] = str(abs(round(m2_sum - m1_sum, 2))).replace('.', ',')
+            if data_indexes['Q'] != -1 and num('Q') != ' - ':
+                q_sum += num('Q')
+                ws['J' + str(out_index)] = st_row(num('Q'))
+                ws['J' + str(out_index + 1)] = str(round(q_sum, 2)).replace('.', ',')
+            if data_indexes['Т, ч'] != -1 and num('Т, ч') != ' - ': 
+                vnr += num('Т, ч')
+                ws['K' + str(out_index)] = st_row(num('Т, ч'))
+                ws['K' + str(out_index + 1)] = str(round(vnr, 2)).replace('.', ',')
+                vos += (24.0 - num('Т, ч'))
+                ws['L' + str(out_index)] = st_row(round(24.0 - num('Т, ч'), 2))
+                ws['L' + str(out_index + 1)] = str(round(vos, 2)).replace('.', ',')
+            else:
+                vnr += 24
+                ws['K' + str(out_index)] = st_row(24.0)
+                ws['K' + str(out_index + 1)] = str(round(vnr, 2)).replace('.', ',')
+                vos += 0
+                ws['L' + str(out_index)] = st_row(0)
+                ws['L' + str(out_index + 1)] = str(round(vos, 2)).replace('.', ',')
+            out_index += 1
             row_index += 1
 
         ws['B' + str(out_index + 1)] = round(t1_avg/(out_index - 17), 2)
@@ -178,6 +182,8 @@ class VzletParser:
             data_indexes = {'Время': -1, 't1': -1, 't2': -1,'V1': -1,'M1': -1,'V2': -1,'M2': -1, 'Q': -1, 'Т, ч': -1}
         
         summary_data = file[1][sum_table_index + 1]
+        if summary_data[0] == None:
+            report += 'Не найдена итоговая таблица в отчете: ' + head_data['factory_num'] + '\n'
         num_finnaly = lambda t: round(float(str(summary_data[data_indexes[t]].value).replace(',', '.')), 2) if summary_data[data_indexes[t]].value != None else ' - '
         
         if summary_data[data_indexes['M1']].value != None and data_indexes['M1'] != -1:
@@ -234,7 +240,7 @@ class VzletParser:
         ws[vos_col + str(sec_row + 1)] = str(round(vos, 2)).replace('.', ',')
 
         # Fill head data
-        ws['A1'] = str(ws['A1'].value).replace('май', get_month(datetime.now().strftime("%d-%m-%Y")))
+        ws['A1'] = str(ws['A1'].value).replace('май', get_month(datetime.strftime(date_to, "%d-%m-%Y")))
         ws['B3'] = date_from
         ws['C3'] = date_to
         ws['B4'] = datetime.now().strftime("%d-%m-%Y")
@@ -258,12 +264,12 @@ class VzletParser:
         return report
 
 
-    def __call__(self, date_from = '01-01-2023', date_to = '18-01-2023'): 
+    def __call__(self): 
         report = '\tВЗЛЕТ\n'   
         for file in self.my_parsing_files:
             rep_type = '1'
             if 'ГВС' in file[0].upper():
                 rep_type = '2'
-            report += self.build_xls(file, rep_type, date_from, date_to)
+            report += self.build_xls(file, rep_type)
 
         return report
