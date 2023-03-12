@@ -17,22 +17,22 @@ def get_head_data(my_dir, factory_num, inp_type):
     head_data = {'factory_num': '', 'complex_num': '', 'consumer': '', 'order': '', 'adress': '', 'cold_temp': '5,0', 'save_folder': ''}
     for i in range(2, 426):
         if  str(header_ws['A' + str(i)].value) in factory_num + '_' + inp_type:
-            head_data['factory_num'] = factory_num
-            head_data['complex_num'] = header_ws['B' + str(i)].value
-            head_data['consumer'] = header_ws['C' + str(i)].value
-            head_data['order'] = header_ws['D' + str(i)].value
-            head_data['adress'] = header_ws['E' + str(i)].value
-            head_data['cold_temp'] = header_ws['G' + str(i)].value
-            head_data['save_folder'] = header_ws['J' + str(i)].value
+            head_data['factory_num'] = header_ws['A' + str(i)].value.replace('_1', '').replace('_2', '')
+            head_data['complex_num'] = header_ws['C' + str(i)].value
+            head_data['consumer'] = header_ws['D' + str(i)].value
+            head_data['order'] = header_ws['E' + str(i)].value
+            head_data['adress'] = header_ws['F' + str(i)].value
+            head_data['cold_temp'] = header_ws['H' + str(i)].value
+            head_data['save_folder'] = header_ws['K' + str(i)].value
         elif '-' in factory_num and str(header_ws['A' + str(i)].value.split('_')[0]) in factory_num + '_' + inp_type:
             head_data['factory_num'] = factory_num
-            head_data['complex_num'] = header_ws['B' + str(i)].value
-            head_data['consumer'] = header_ws['C' + str(i)].value
-            head_data['order'] = header_ws['D' + str(i)].value
-            head_data['adress'] = header_ws['E' + str(i)].value
-            head_data['cold_temp'] = header_ws['G' + str(i)].value
-            head_data['save_folder'] = header_ws['J' + str(i)].value
-
+            head_data['complex_num'] = header_ws['C' + str(i)].value
+            head_data['consumer'] = header_ws['D' + str(i)].value
+            head_data['order'] = header_ws['E' + str(i)].value
+            head_data['adress'] = header_ws['F' + str(i)].value
+            head_data['cold_temp'] = header_ws['H' + str(i)].value
+            head_data['save_folder'] = header_ws['K' + str(i)].value
+    
     return head_data
 
 
@@ -188,7 +188,7 @@ class TV7Parser:
                     row_shift += 1
 
                 data_indexes = self.get_columns(file[1][row_index + row_shift])
-                summary_data = file[1][row_index + row_shift+2]
+                summary_data = file[1][row_index + row_shift + 3]
             else:
                 data_indexes = self.get_columns(file[1][row_index + 3])
                 summary_data = file[1][row_index + 9]
@@ -289,6 +289,10 @@ class TV7Parser:
                     continue
                 if 'Серийный номер' in row[0].value:
                     head_data = get_head_data(self.my_dir, str(row[0].value).split('Серийный номер ')[1].split(',')[0], rep_type)
+                    if 'ТВ2' in row[0].value:
+                        rep_type = '2'
+                    if 'ТВ1' in row[0].value:
+                        rep_type = '1'
                 if 'Дата/время' in row[0].value:
                     data_indexes = self.get_columns(row)
                     break
@@ -304,6 +308,10 @@ class TV7Parser:
                     continue
                 if 'Серийный номер' in row[0].value:
                     head_data = get_head_data(self.my_dir, str(row[0].value).split('Серийный номер ')[1].split(',')[0], rep_type)
+                    if 'ТВ2' in row[0].value:
+                        rep_type = '2'
+                    if 'ТВ1' in row[0].value:
+                        rep_type = '1'
                 if 'Дата/время' in row[0].value:
                     data_indexes = self.get_columns(row)
                     break

@@ -75,7 +75,6 @@ class MyApp(QDialog, Form):
         self.setGeometry(self.left, self.top, self.width, self.height)
         self.openFileNameDialog()
         self.saveFileDialog()
-
         self.show()
 
 

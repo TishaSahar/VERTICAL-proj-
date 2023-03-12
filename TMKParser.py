@@ -17,21 +17,22 @@ def get_head_data(my_dir, factory_num, inp_type):
     head_data = {'factory_num': '', 'complex_num': '', 'consumer': '', 'order': '', 'adress': '', 'cold_temp': '5,0', 'save_folder': ''}
     for i in range(2, 426):
         if  str(header_ws['A' + str(i)].value) in factory_num + '_' + inp_type:
-            head_data['factory_num'] = factory_num
-            head_data['complex_num'] = header_ws['B' + str(i)].value
-            head_data['consumer'] = header_ws['C' + str(i)].value
-            head_data['order'] = header_ws['D' + str(i)].value
-            head_data['adress'] = header_ws['E' + str(i)].value
-            head_data['cold_temp'] = header_ws['G' + str(i)].value
-            head_data['save_folder'] = header_ws['J' + str(i)].value
+            head_data['factory_num'] = header_ws['A' + str(i)].value.replace('_1', '').replace('_2', '')
+            head_data['complex_num'] = header_ws['C' + str(i)].value
+            head_data['consumer'] = header_ws['D' + str(i)].value
+            head_data['order'] = header_ws['E' + str(i)].value
+            head_data['adress'] = header_ws['F' + str(i)].value
+            head_data['cold_temp'] = header_ws['H' + str(i)].value
+            head_data['save_folder'] = header_ws['K' + str(i)].value
         elif '-' in factory_num and str(header_ws['A' + str(i)].value.split('_')[0]) in factory_num + '_' + inp_type:
             head_data['factory_num'] = factory_num
-            head_data['complex_num'] = header_ws['B' + str(i)].value
-            head_data['consumer'] = header_ws['C' + str(i)].value
-            head_data['order'] = header_ws['D' + str(i)].value
-            head_data['adress'] = header_ws['E' + str(i)].value
-            head_data['cold_temp'] = header_ws['G' + str(i)].value
-            head_data['save_folder'] = header_ws['J' + str(i)].value
+            head_data['complex_num'] = header_ws['C' + str(i)].value
+            head_data['consumer'] = header_ws['D' + str(i)].value
+            head_data['order'] = header_ws['E' + str(i)].value
+            head_data['adress'] = header_ws['F' + str(i)].value
+            head_data['cold_temp'] = header_ws['H' + str(i)].value
+            head_data['save_folder'] = header_ws['K' + str(i)].value
+    
     return head_data
 
 
@@ -65,6 +66,7 @@ class TMKParser:
 
     def get_columns(self, row, heat_cols={'Время': -1, 't1': -1, 't2': -1,'V1': -1,'M1': -1,'V2': -1,'M2': -1, 'Q': -1, 'Tн': -1,'ВОС': -1, 'НС': -1}):
         ind = 0
+        rep_type = '1'
         for cell in row:
             if cell.value == None:
                 ind += 1
@@ -74,10 +76,12 @@ class TMKParser:
                     heat_cols[key] = ind
             #print(cell.value, ' ', ind)
             if 't3' in cell.value and heat_cols['t1'] == -1:
+                rep_type = '2'
                 heat_cols['t1'] = ind
             if 't4' in cell.value and heat_cols['t2'] == -1:
                 heat_cols['t2'] = ind
             if 'V3' in cell.value and heat_cols['V1'] == -1 and 'V1-V2' not in cell.value:
+                rep_type = '2'
                 heat_cols['V1'] = ind
             if 'V4' in cell.value and heat_cols['V2'] == -1 and 'V1-V2' not in cell.value:
                 heat_cols['V2'] = ind
@@ -86,12 +90,13 @@ class TMKParser:
             if 'G2' in cell.value and heat_cols['M2'] == -1 and 'G1-G2' not in cell.value:
                 heat_cols['M2'] = ind
             if 'G3' in cell.value and heat_cols['M1'] == -1 and 'G3-G4' not in cell.value:
+                rep_type = '2'
                 heat_cols['M1'] = ind
             if 'G4' in cell.value and heat_cols['M2'] == -1 and 'G3-G4' not in cell.value:
                 heat_cols['M2'] = ind
             if 'Q' in cell.value and heat_cols['Q'] == -1:
                 heat_cols['Q'] = ind
-            if ('Tр,' in cell.value or 'Время' in cell.value or 'Tраб' in cell.value) and heat_cols['Tн'] == -1:
+            if ('Tр,' in cell.value or 'Время' in cell.value or 'Tраб' in cell.value or 'T1' in cell.value) and heat_cols['Tн'] == -1:
                 heat_cols['Tн'] = ind
             if 'Tн' in cell.value and heat_cols['Tн'] == -1:
                 heat_cols['Tн'] = ind
@@ -99,8 +104,18 @@ class TMKParser:
                 heat_cols['НС'] = ind
             ind += 1
 
-        return heat_cols
+        return [heat_cols, rep_type]
 
+
+    def num_def(self, t, summary_data, data_indexes):
+        if summary_data[data_indexes[t]].value != None:
+            if '-' not in summary_data[data_indexes[t]].value:
+                return round(float(str(summary_data[data_indexes[t]].value).replace(',', '.')), 2)
+            else:
+                return ' - '
+        else:
+            return ' - '
+        
 
     def build_xls(self, file, rep_type, date_from = '01-01-2023', date_to = '18-01-2023'):
         report = ''
@@ -119,7 +134,7 @@ class TMKParser:
         for row in file[1].iter_rows():
             num = '-'
             float_time = '-'
-            float_time = lambda t: round(float(str(row[data_indexes[t]].value).split(':')[0]) + (10 / 6) * float(str(row[data_indexes[t]].value).split(':')[1]), 2)
+            float_time = lambda t: round(float(str(row[data_indexes[t]].value).split(':')[0]) + 0.0167 * float(str(row[data_indexes[t]].value).split(':')[1]), 2)
             num = lambda t: round(float(str(row[data_indexes[t]].value).replace(',', '.')), 2) if '-' not in row[data_indexes[t]].value else ' - ' if row[data_indexes[t]].value != None else ' - ' 
             st_row = lambda n: str(n).replace('.', ',')
             
@@ -128,13 +143,13 @@ class TMKParser:
                 continue
             
             if row[0].value == 'Дата':
-                data_indexes = self.get_columns(row, data_indexes)
+                data_indexes, rep_type = self.get_columns(row, data_indexes)
                 row_index += 1
                 data_index = row_index
                 continue
 
             if file[1]['A' + str(row_index-1)].value == 'Дата':
-                data_indexes = self.get_columns(row, data_indexes)
+                data_indexes, rep_type = self.get_columns(row, data_indexes)
                 row_index += 1
                 data_index = row_index
                 continue
@@ -167,13 +182,13 @@ class TMKParser:
                     if num('V1') != ' - ': v1_sum += num('V1')
                     ws['D' + str(out_index)] = st_row(num('V1'))
                     ws['D' + str(out_index + 1)] = str(round(v1_sum, 2)).replace('.', ',')
-                    ws['H' + str(out_index)] = st_row(round(num('V1'), 2))
+                    if num('V1') != ' - ': ws['H' + str(out_index)] = st_row(round(num('V1'), 2))
                     ws['H' + str(out_index + 1)] = str(abs(round(v1_sum, 2))).replace('.', ',')
                 if data_indexes['M1'] != -1:
                     if num('M1') != ' - ': m1_sum += num('M1')
                     ws['E' + str(out_index)] = st_row(num('M1'))
                     ws['E' + str(out_index + 1)] = str(round(m1_sum, 2)).replace('.', ',')
-                    ws['I' + str(out_index)] = st_row(num('M1'))
+                    if num('M1') != ' - ': ws['I' + str(out_index)] = st_row(num('M1'))
                     ws['I' + str(out_index + 1)] = str(abs(round(m1_sum, 2))).replace('.', ',')
                 if data_indexes['V2'] != -1 and num('V2') != ' - ':
                     if num('V2') != ' - ': v2_sum += num('V2')
@@ -197,7 +212,7 @@ class TMKParser:
                     ws['K' + str(out_index + 1)] = str(round(vnr, 2)).replace('.', ',')
                 if data_indexes['Tн'] != -1:
                     if float_time('Tн') != ' - ': vos += (24.0 - float_time('Tн'))
-                    ws['L' + str(out_index)] = st_row(24.0 - float_time('Tн'))
+                    ws['L' + str(out_index)] = st_row(round(24.0 - float_time('Tн'), 2))
                     ws['L' + str(out_index + 1)] = str(round(vos, 2)).replace('.', ',')
 
                 out_index += 1
@@ -212,30 +227,29 @@ class TMKParser:
         # Parse resoult table
         while file[1][sum_table_index][0].value != 'Дата':
             sum_table_index += 1
-        data_indexes = self.get_columns(file[1][sum_table_index], {'Время': -1, 't1': -1, 't2': -1,'V1': -1,'M1': -1,'V2': -1,'M2': -1, 'Q': -1, 'Tн': -1,'ВОС': -1, 'НС': -1})
+        data_indexes, type = self.get_columns(file[1][sum_table_index], {'Время': -1, 't1': -1, 't2': -1,'V1': -1,'M1': -1,'V2': -1,'M2': -1, 'Q': -1, 'Tн': -1,'ВОС': -1, 'НС': -1})
         summary_data = file[1][sum_table_index + 1]
 
         v1_start = 0; v2_start = 0; m1_start = 0; m2_start = 0; q_start = 0; vnr_start = 0; vos_start = 0
         float_time_finnaly = lambda t: round(float(str(summary_data[data_indexes[t]].value).split(':')[0]) + (10 / 6) * float(str(summary_data[data_indexes[t]].value).split(':')[1]), 2) \
                                         if '-' not in summary_data[data_indexes[t]].value else ' - ' if summary_data[data_indexes[t]].value != None else ' - '
-        num_finnaly = lambda t: round(float(str(summary_data[data_indexes[t]].value).replace(',', '.')), 2) if '-' not in summary_data[data_indexes[t]].value else ' - ' \
-                                                    if summary_data[data_indexes[t]].value != None else ' - '
-        if summary_data[data_indexes['M1']].value != None and data_indexes['M1'] != -1:
+        num_finnaly = lambda t: self.num_def(t, summary_data, data_indexes)
+        if num_finnaly('M1') != ' - ' and data_indexes['M1'] != -1:
             m1_start = num_finnaly('M1')
             m1_sum += num_finnaly('M1')
-        if summary_data[data_indexes['M2']].value != None and data_indexes['M2'] != -1:
+        if num_finnaly('M2') != ' - ' and data_indexes['M2'] != -1:
             m2_start = num_finnaly('M2')
             m2_sum += num_finnaly('M2')
-        if summary_data[data_indexes['V1']].value != None and data_indexes['V1'] != -1:
+        if num_finnaly('V1') != ' - ' and data_indexes['V1'] != -1:
             v1_start = num_finnaly('V1')
             v1_sum += num_finnaly('V1')
-        if summary_data[data_indexes['V2']].value != None and data_indexes['V2'] != -1:
+        if num_finnaly('V2') != ' - ' and data_indexes['V2'] != -1:
             v2_start = num_finnaly('V2')
             v2_sum += num_finnaly('V2')
-        if summary_data[data_indexes['Q']].value != None and data_indexes['Q'] != -1:
+        if num_finnaly('Q') != ' - ' and data_indexes['Q'] != -1:
             q_start = num_finnaly('Q')
             q_sum += num_finnaly('Q')
-        if summary_data[data_indexes['Tн']].value != None and data_indexes['Tн'] != -1:
+        if float_time_finnaly('Tн') != ' - ' and data_indexes['Tн'] != -1:
             vnr_start = float_time_finnaly('Tн')
             vnr += float_time_finnaly('Tн')
 
@@ -304,7 +318,7 @@ class TMKParser:
 
         for file in self.my_parsing_files:
             rep_type = '1'
-            if 'ГВС' in file[0].upper():
+            if 'ГВС' in file[0].upper() or 'Тепловая система 2' == file[1]['D9'].value:
                 rep_type = '2'
 
             report += self.build_xls(file, rep_type, date_from, date_to) + '\n'

@@ -20,21 +20,21 @@ def get_head_data(my_dir, factory_num, inp_type):
     head_data = {'factory_num': '', 'complex_num': '', 'consumer': '', 'order': '', 'adress': '', 'cold_temp': '5,0', 'save_folder': ''}
     for i in range(2, 426):
         if  str(header_ws['A' + str(i)].value) in factory_num + '_' + inp_type:
-            head_data['factory_num'] = factory_num
-            head_data['complex_num'] = header_ws['B' + str(i)].value
-            head_data['consumer'] = header_ws['C' + str(i)].value
-            head_data['order'] = header_ws['D' + str(i)].value
-            head_data['adress'] = header_ws['E' + str(i)].value
-            head_data['cold_temp'] = header_ws['G' + str(i)].value
-            head_data['save_folder'] = header_ws['J' + str(i)].value
+            head_data['factory_num'] = header_ws['A' + str(i)].value.replace('_1', '').replace('_2', '')
+            head_data['complex_num'] = header_ws['C' + str(i)].value
+            head_data['consumer'] = header_ws['D' + str(i)].value
+            head_data['order'] = header_ws['E' + str(i)].value
+            head_data['adress'] = header_ws['F' + str(i)].value
+            head_data['cold_temp'] = header_ws['H' + str(i)].value
+            head_data['save_folder'] = header_ws['K' + str(i)].value
         elif '-' in factory_num and str(header_ws['A' + str(i)].value.split('_')[0]) in factory_num + '_' + inp_type:
             head_data['factory_num'] = factory_num
-            head_data['complex_num'] = header_ws['B' + str(i)].value
-            head_data['consumer'] = header_ws['C' + str(i)].value
-            head_data['order'] = header_ws['D' + str(i)].value
-            head_data['adress'] = header_ws['E' + str(i)].value
-            head_data['cold_temp'] = header_ws['G' + str(i)].value
-            head_data['save_folder'] = header_ws['J' + str(i)].value
+            head_data['complex_num'] = header_ws['C' + str(i)].value
+            head_data['consumer'] = header_ws['D' + str(i)].value
+            head_data['order'] = header_ws['E' + str(i)].value
+            head_data['adress'] = header_ws['F' + str(i)].value
+            head_data['cold_temp'] = header_ws['H' + str(i)].value
+            head_data['save_folder'] = header_ws['K' + str(i)].value
     
     return head_data
 

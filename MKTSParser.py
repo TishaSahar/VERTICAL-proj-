@@ -16,21 +16,21 @@ def get_head_data(my_dir, factory_num, inp_type):
     head_data = {'factory_num': '', 'complex_num': '', 'consumer': '', 'order': '', 'adress': '', 'cold_temp': '5,0', 'save_folder': ''}
     for i in range(2, 426):
         if  str(header_ws['A' + str(i)].value) in factory_num + '_' + inp_type:
-            head_data['factory_num'] = factory_num
-            head_data['complex_num'] = header_ws['B' + str(i)].value
-            head_data['consumer'] = header_ws['C' + str(i)].value
-            head_data['order'] = header_ws['D' + str(i)].value
-            head_data['adress'] = header_ws['E' + str(i)].value
-            head_data['cold_temp'] = header_ws['G' + str(i)].value
-            head_data['save_folder'] = header_ws['J' + str(i)].value
+            head_data['factory_num'] = header_ws['A' + str(i)].value.replace('_1', '').replace('_2', '')
+            head_data['complex_num'] = header_ws['C' + str(i)].value
+            head_data['consumer'] = header_ws['D' + str(i)].value
+            head_data['order'] = header_ws['E' + str(i)].value
+            head_data['adress'] = header_ws['F' + str(i)].value
+            head_data['cold_temp'] = header_ws['H' + str(i)].value
+            head_data['save_folder'] = header_ws['K' + str(i)].value
         elif '-' in factory_num and str(header_ws['A' + str(i)].value.split('_')[0]) in factory_num + '_' + inp_type:
             head_data['factory_num'] = factory_num
-            head_data['complex_num'] = header_ws['B' + str(i)].value
-            head_data['consumer'] = header_ws['C' + str(i)].value
-            head_data['order'] = header_ws['D' + str(i)].value
-            head_data['adress'] = header_ws['E' + str(i)].value
-            head_data['cold_temp'] = header_ws['G' + str(i)].value
-            head_data['save_folder'] = header_ws['J' + str(i)].value
+            head_data['complex_num'] = header_ws['C' + str(i)].value
+            head_data['consumer'] = header_ws['D' + str(i)].value
+            head_data['order'] = header_ws['E' + str(i)].value
+            head_data['adress'] = header_ws['F' + str(i)].value
+            head_data['cold_temp'] = header_ws['H' + str(i)].value
+            head_data['save_folder'] = header_ws['K' + str(i)].value
     
     return head_data
 
@@ -144,6 +144,7 @@ class MKTSParser:
                     else:
                         ws['E' + str(out_index)] = st_row(num('M1'))
                         m1_sum += num('M1')
+                        dm_sum = m1_sum
                         ws['E' + str(out_index + 1)] = st_row(round(m1_sum, 2))
                     if data_index['V2'] == -1 or '-' in str(row[data_index['V2']].value):
                         ws['F' + str(out_index)] = ' - '
@@ -158,13 +159,14 @@ class MKTSParser:
                     if data_index['M2'] == -1 or '-' in str(row[data_index['M2']].value):
                         ws['G' + str(out_index)] = ' - '
                         ws['I' + str(out_index)] = ws['E' + str(out_index)].value
+                        ws['I' + str(out_index + 1)] = round(dm_sum, 2)
                     else:
                         ws['G' + str(out_index)] = st_row(num('M2'))
                         m2_sum += num('M2')
-                        dv_sum += round(abs(num('M2') - num('M1')), 2)
+                        dm_sum -= round(abs(m2_sum - m1_sum), 2)
                         ws['G' + str(out_index + 1)] = st_row(round(m2_sum, 2))
                         ws['I' + str(out_index)] = st_row(round(abs(num('M2') - num('M1')), 2))
-
+                        ws['I' + str(out_index + 1)] = st_row(round(abs(m2_sum - m1_sum), 2))
                     if data_index['Q'] == -1  or '-' in str(row[data_index['Q']].value):
                         ws['J' + str(out_index)] = ' - '
                     else:
