@@ -10,9 +10,8 @@ from SPTParser import SPTParser
 from TV7Parser import TV7Parser
 from TMKParser import TMKParser
 
-
 Form, _ = uic.loadUiType("my.ui")
-
+    
 class MyApp(QDialog, Form):
     def __init__(self):
         super(MyApp, self).__init__()
@@ -64,9 +63,9 @@ class MyApp(QDialog, Form):
     def get_data(self):
         return self.__data_list
 
-
     def set_data(self, data):
         self.__data_list.append(data)
+
     data = property(get_data, set_data)
 
     # Set my UI
@@ -90,12 +89,12 @@ class MyApp(QDialog, Form):
         self.textBrowser_2.clear()
         options = QFileDialog.Options()
         options |= QFileDialog.DontUseNativeDialog
-        files, _ = QFileDialog.getOpenFileNames(self,"Выберите необходимые файлы", "","Exel 2003 (*.xls);; Exel Files (*.xlsx);; Text files (*.txt)", options=options)
+        files, _ = QFileDialog.getOpenFileNames(self,"Выберите необходимые файлы", "","Exel Files (*.xlsx);; Exel 2003 (*.xls);; Text files (*.txt)", options=options)
         if files:
             for f in files:
                 self.__name_list.append(f)
                 self.textBrowser_2.append(str(f) + '\n')
-        self.printCurrData()
+        print(len(self.__name_list))
 
 
     def saveFileDialog(self):
@@ -140,27 +139,24 @@ class MyApp(QDialog, Form):
         self.textBrowser.clear()
         self.textBrowser.append('<b>\tОбработано:</b>' + '\n')
         self.__data_list = self.read_files()
-
-        self.textBrowser_2.clear()
-        self.printCurrData()
-
+        
         if self.checkVzlet.isChecked():
-            vzlet = VzletParser(self.__data_list, self.getCurrPath(), self._saving_directory)
+            vzlet = VzletParser(self.__name_list, self.getCurrPath(), self._saving_directory)
             self.textBrowser.append(vzlet())
         if self.checkVKT.isChecked():
-            vkt = VKTParser(self.__data_list, self.getCurrPath(), self._saving_directory)
+            vkt = VKTParser(self.__name_list, self.getCurrPath(), self._saving_directory)
             self.textBrowser.append(vkt())
         if self.checkMKTS.isChecked():
-            mkts = MKTSParser(self.__data_list, self.getCurrPath(), self._saving_directory)
+            mkts = MKTSParser(self.__name_list, self.getCurrPath(), self._saving_directory)
             self.textBrowser.append(mkts())
         if self.checkSPT.isChecked():
-            spt = SPTParser(self.__data_list, self.getCurrPath(), self._saving_directory)
+            spt = SPTParser(self.__name_list, self.getCurrPath(), self._saving_directory)
             self.textBrowser.append(spt())
         if self.checkTV7.isChecked():
-            tv7 = TV7Parser(self.__data_list, self.getCurrPath(), self._saving_directory)
+            tv7 = TV7Parser(self.__name_list, self.getCurrPath(), self._saving_directory)
             self.textBrowser.append(tv7())
         if self.checkTMK.isChecked():
-            tmk = TMKParser(self.__data_list, self.getCurrPath(), self._saving_directory)
+            tmk = TMKParser(self.__name_list, self.getCurrPath(), self._saving_directory)
             self.textBrowser.append(tmk())
 
 

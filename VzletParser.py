@@ -3,44 +3,16 @@ from openpyxl.styles import Border, Side, PatternFill, Font, GradientFill, Align
 import pyexcel
 import os
 from datetime import datetime
-
-months = {'01':'январь', '02':'февраль', '03':'март', '04':'апрель',\
-         '05':'май', '06':'июнь', '07':'июль', '08':'август',\
-         '09':'сеньтябрь', '10':'октябрь', '11':'ноябрь', '12':'декабрь'}
-def get_month(m='01-01-2023'):
-    return months[m[3:5]]
-
-
-def get_head_data(my_dir, factory_num, inp_type):
-    header_ws = load_workbook(my_dir + '\Templates\HeadDat.xlsx', data_only=False).active
-    head_data = {'factory_num': '', 'complex_num': '', 'consumer': '', 'order': '', 'adress': '', 'cold_temp': '5,0', 'save_folder': ''}
-    for i in range(2, 426):
-        if  str(header_ws['A' + str(i)].value) in factory_num + '_' + inp_type:
-            head_data['factory_num'] = header_ws['A' + str(i)].value.replace('_1', '').replace('_2', '')
-            head_data['complex_num'] = header_ws['C' + str(i)].value
-            head_data['consumer'] = header_ws['D' + str(i)].value
-            head_data['order'] = header_ws['E' + str(i)].value
-            head_data['adress'] = header_ws['F' + str(i)].value
-            head_data['cold_temp'] = header_ws['H' + str(i)].value
-            head_data['save_folder'] = header_ws['K' + str(i)].value
-        elif '-' in factory_num and str(header_ws['A' + str(i)].value.split('_')[0]) in factory_num + '_' + inp_type:
-            head_data['factory_num'] = factory_num
-            head_data['complex_num'] = header_ws['C' + str(i)].value
-            head_data['consumer'] = header_ws['D' + str(i)].value
-            head_data['order'] = header_ws['E' + str(i)].value
-            head_data['adress'] = header_ws['F' + str(i)].value
-            head_data['cold_temp'] = header_ws['H' + str(i)].value
-            head_data['save_folder'] = header_ws['K' + str(i)].value
-    
-    return head_data
+from HeadData import *
 
 
 class VzletParser:
     def __init__(self, data_list, curr_dir, save_dir):
+        self.report = ''
         self.my_parsing_files = []
         self.my_dir = curr_dir
         self.save_dir = save_dir
-        for file in data_list['ВЗЛЕТ']:
+        for file in data_list:
             if 'xlsx' not in file:
                 if 'xls' in file:
                     pyexcel.save_book_as(file_name=file,
@@ -50,7 +22,23 @@ class VzletParser:
                     print('Vzlet wrong file!')
                     continue
 
-            self.my_parsing_files.append([file, load_workbook(file).active])
+            rep_type = '1'
+            ws = load_workbook(file).active
+            if ws['A1'].value != None:
+                if '_2' in str(ws['A1'].value) or 'ГВС' in str(ws['A1'].value):
+                    rep_type = '2'
+            else:
+                continue
+                #print('Can not to expect factory num in: ',  str(file))
+
+            if get_head_data(self.my_dir, str(ws['A1'].value), rep_type)['type'] != None:
+                if 'ВЗЛЕТ' in get_head_data(self.my_dir, str(ws['A1'].value), rep_type)['type']:
+                    self.my_parsing_files.append([file, load_workbook(file).active])
+                else:
+                    continue
+            else:
+                print('Can not to expect type in: ',  str(file))
+
 
     def get_columns(self, row):
         heat_cols = {'Время': -1, 't1': -1, 't2': -1,'V1': -1,'M1': -1,'V2': -1,'M2': -1, 'Q': -1, 'Т, ч': -1}
@@ -83,7 +71,7 @@ class VzletParser:
     def build_xls(self, file, rep_type):
         date_from = ''
         date_to = ''
-        report = ''
+        report_ = ''
         template = load_workbook(self.my_dir + '\Templates\VEC_Template.xlsx',  read_only=False, data_only=False)  # Template xlsx file  
         file_name = file[0].split('/')[len(file[0].split('/')) - 1].split('.xlsx')[0]
         if file[0].split('/')[len(file[0].split('/')) - 1]:
@@ -141,13 +129,13 @@ class VzletParser:
                 ws['F' + str(out_index)] = st_row(num('V2'))
                 ws['F' + str(out_index + 1)] = str(round(v2_sum, 2)).replace('.', ',')
                 if num('V1') != ' - ': ws['H' + str(out_index)] = st_row(abs(round(num('V2') - num('V1'), 2))) 
-                ws['H' + str(out_index + 1)] = str(abs(round(v2_sum - v1_sum, 2))).replace('.', ',')
+                ws['H' + str(out_index + 1)] = str(round(v1_sum - v2_sum, 2)).replace('.', ',')
             if data_indexes['M2'] != -1 and num('M2') != ' - ':
                 m2_sum += num('M2')
                 ws['G' + str(out_index)] = st_row(num('M2'))
                 ws['G' + str(out_index + 1)] = str(round(m2_sum, 2)).replace('.', ',')
                 if num('M1') != ' - ': ws['I' + str(out_index)] = st_row(abs(round(num('M2') - num('M1'), 2))) 
-                ws['I' + str(out_index + 1)] = str(abs(round(m2_sum - m1_sum, 2))).replace('.', ',')
+                ws['I' + str(out_index + 1)] = str(round(m1_sum - m2_sum, 2)).replace('.', ',')
             if data_indexes['Q'] != -1 and num('Q') != ' - ':
                 q_sum += num('Q')
                 ws['J' + str(out_index)] = st_row(num('Q'))
@@ -168,9 +156,9 @@ class VzletParser:
                 ws['L' + str(out_index + 1)] = str(round(vos, 2)).replace('.', ',')
             out_index += 1
             row_index += 1
-
-        ws['B' + str(out_index + 1)] = round(t1_avg/(out_index - 17), 2)
-        ws['C' + str(out_index + 1)] = round(t2_avg/(out_index - 17), 2)
+        
+        ws['B' + str(out_index + 1)] = round(t1_avg/(out_index - 18), 2)
+        ws['C' + str(out_index + 1)] = round(t2_avg/(out_index - 18), 2)
 
         sec_row = out_index + 1
         sum_table_index = row_index + 1
@@ -183,7 +171,7 @@ class VzletParser:
         
         summary_data = file[1][sum_table_index + 1]
         if summary_data[0] == None:
-            report += 'Не найдена итоговая таблица в отчете: ' + head_data['factory_num'] + '\n'
+            report_ += 'Не найдена итоговая таблица в отчете: ' + head_data['factory_num'] + '\n'
         num_finnaly = lambda t: round(float(str(summary_data[data_indexes[t]].value).replace(',', '.')), 2) if summary_data[data_indexes[t]].value != None else ' - '
         
         if summary_data[data_indexes['M1']].value != None and data_indexes['M1'] != -1:
@@ -257,19 +245,24 @@ class VzletParser:
         string_type = '_отопл'
         if rep_type == '2':
             string_type = '_ГВС'
-        
-        template.save(curr_dir + '/' + head_data['adress'].replace('/', 'к') + string_type + '.xlsx')
-        report += curr_dir + '/' + head_data['adress'].replace('/', 'к') + string_type + '.xlsx'+ '\n\n'
+    
+        name = head_data['consumer'].replace(',', '').replace('/', 'к').replace('"', '').replace('<','').replace('>','').replace('?','').replace('*','').replace('|','') + \
+            ' - ' + head_data['adress'].replace(',', '').replace('/', 'к').replace('"', '').replace('<','').replace('>','').replace('?','').replace('*','').replace('|','')
+        while name in self.report:
+            name += '_2'
+        template.save(curr_dir + '/' + name + string_type + '.xlsx')
+        report_ += head_data['save_folder'] + '/' + name + string_type + '.xlsx'+ '\n\n'
 
-        return report
+        return report_
 
 
     def __call__(self): 
-        report = '\tВЗЛЕТ\n'   
+        self.report = '\tВЗЛЕТ\n'   
+        print(len(self.my_parsing_files))
         for file in self.my_parsing_files:
             rep_type = '1'
             if 'ГВС' in file[0].upper():
                 rep_type = '2'
-            report += self.build_xls(file, rep_type)
+            self.report += self.build_xls(file, rep_type)
 
-        return report
+        return self.report

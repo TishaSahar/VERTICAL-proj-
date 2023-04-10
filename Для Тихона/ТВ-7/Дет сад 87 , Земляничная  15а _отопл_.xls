@@ -1,0 +1,891 @@
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+xmlns:x="urn:schemas-microsoft-com:office:excel"
+xmlns="http://www.w3.org/TR/REC-html40">
+
+
+<HEAD>
+<meta http-equiv=Content-Type content="text/html; charset=windows-1251">
+<meta name=ProgId content=Excel.Sheet>
+<meta name=Generator content="Microsoft Excel 9">
+<TITLE>Отчет</TITLE>
+
+
+<style>
+<!--table
+	{mso-displayed-decimal-separator:"\.";
+	mso-displayed-thousand-separator:;}
+@page
+	{margin:.98in .79in .98in .79in;
+	mso-header-margin:.5in;
+	mso-footer-margin:.5in;
+	}
+-->
+
+
+table    {border: solid 1px black; border-collapse: collapse; padding-left: 3px; padding-top: 1px; padding-right: 1px; padding-bottom: 3px;}
+table th {border: solid 1px black; font-size: 11pt; font-family: 'Courier New'; text-align: center; white-space: nowrap;}
+table td {border: solid 1px black; font-size: 11pt; font-family: 'Courier New'; text-align: left; white-space: nowrap;}
+pre {font-size: 11pt; font-family: 'Courier New';}
+div {font-size: 11pt; font-family: 'Courier New';}
+table th.b {border-bottom: none;}
+table th.tb {border-bottom: none;border-top: none;}
+table th.br {border-bottom: none;border-right: none;}
+table th.bl {border-bottom: none;border-left: none;}
+table th.t {border-top: none;}
+table th.tr {border-top: none;border-right: none;}
+table th.tl {border-top: none;border-left: none;}
+table th.tbr {border-top: none;border-bottom: none;border-right: none;}
+table th.tbl {border-top: none;border-bottom: none;border-left: none;}
+table th.r {border-right: none;}
+table th.l {border-left: none;}
+table th.lalignright {border-left: none;text-align: right;}
+table th.ralignright {border-right: none;text-align: right;}
+table th.alignright {text-align: right;}
+table td.lbr {border-left: none;border-bottom: none;border-right: none;}
+table td.invisible {border-left: none;border-top: none;border-bottom: none;border-right: none;}
+table th.invisible {border-left: none;border-top: none;border-bottom: none;border-right: none;}
+table th.header {border-left: none;border-top: none;border-bottom: none;border-right: none;}
+table td.header {border-left: none;border-top: none;border-bottom: none;border-right: none;}
+table td.r {border-right: none;}
+table td.l {border-left: none;}
+table td.lalignright {border-left: none;text-align: right;}
+table td.ralignright {border-right: none;text-align: right;}
+table td.alignright {text-align: right;}
+table td.noborder {border-left: none;border-top: none;border-right: none;border-bottom: none;text-align: right;}
+table td.alignright {text-align: right;}
+table.invisible {border-width: 0px;}
+
+</style>
+
+<!--<STYLE [TYPE="text/css"]>
+</STYLE>-->
+
+<!--[if gte mso 9]><xml>
+ <x:ExcelWorkbook>
+  <x:ExcelWorksheets>
+   <x:ExcelWorksheet>
+    <x:Name>xls</x:Name>
+    <x:WorksheetOptions>
+     <x:Print>
+      <x:ValidPrinterInfo/>
+      <x:PaperSizeIndex>9</x:PaperSizeIndex>
+      <x:Scale>100</x:Scale>
+      <x:HorizontalResolution>1200</x:HorizontalResolution>
+      <x:VerticalResolution>1200</x:VerticalResolution>
+     </x:Print>
+     <x:PageBreakZoom>60</x:PageBreakZoom>
+     <x:Selected/>
+     <x:DoNotDisplayGridlines/>
+     <x:Panes>
+      <x:Pane>
+       <x:Number>3</x:Number>
+       <x:ActiveRow>30</x:ActiveRow>
+       <x:ActiveCol>4</x:ActiveCol>
+      </x:Pane>
+     </x:Panes>
+     <x:ProtectContents>False</x:ProtectContents>
+     <x:ProtectObjects>False</x:ProtectObjects>
+     <x:ProtectScenarios>False</x:ProtectScenarios>
+    </x:WorksheetOptions>
+   </x:ExcelWorksheet>
+  </x:ExcelWorksheets>
+  <x:WindowHeight>8835</x:WindowHeight>
+  <x:WindowWidth>15180</x:WindowWidth>
+  <x:WindowTopX>120</x:WindowTopX>
+  <x:WindowTopY>105</x:WindowTopY>
+  <x:ProtectStructure>False</x:ProtectStructure>
+  <x:ProtectWindows>False</x:ProtectWindows>
+ </x:ExcelWorkbook>
+</xml><![endif]-->
+</HEAD>
+
+<BODY>
+
+
+
+<P><PRE>
+                                 ОТЧЕТ
+                    о суточных параметрах теплоснабжения
+                        за 01/01/23г.-25/01/23г.
+   Абонент: Д,С 87  Карамелька
+   Адрес:Зенитчиков 15а
+   Договор N:000000000                        Тип расходомера:___________
+   Тепловычислитель ТВ7-03    сет.N  000      Пределы измерений:
+   Договорные расходы:                        G1 max =   15.00 м3/ч  G1 min =    0.02 м3/ч
+   М сет.воды=______т.сут Мгвс=______ т.сут   G2 max =   15.00 м3/ч  G2 min =    0.02 м3/ч
+   tхв: догов., tхд =    5.00°C               
+
+   Серийный номер 19077493, БД=1, ТВ1, СИ=6, КТ3=0, ФРТ=1 КСН=0x69FE
+</PRE></P>
+<TABLE border=1 cellspacing=0 cellpadding=0>
+<TR>
+  <TH class="b">Дата/время</TH>
+  <TH class="br" style="width: 99px;" colspan=2>t1</TH>
+  <TH class="br" style="width: 99px;" colspan=2>t2</TH>
+  <TH class="br" style="width: 77px;" colspan=2>dt</TH>
+  <TH class="br" style="width: 88px;" colspan=2>P1</TH>
+  <TH class="br" style="width: 88px;" colspan=2>P2</TH>
+  <TH class="br" style="width: 132px;" colspan=2>V1</TH>
+  <TH class="br" style="width: 132px;" colspan=2>V2</TH>
+  <TH class="br" style="width: 132px;" colspan=2>M1</TH>
+  <TH class="br" style="width: 132px;" colspan=2>M2</TH>
+  <TH class="br" style="width: 110px;" colspan=2>dM</TH>
+  <TH class="br" style="width: 99px;" colspan=2>tx</TH>
+  <TH class="br" style="width: 88px;" colspan=2>Px</TH>
+  <TH class="br" style="width: 110px;" colspan=2>Qтв</TH>
+  <TH class="b" style="width: 38px;">ВНР</TH>
+  <TH class="b" style="width: 38px;">ВОС</TH>
+  <TH class="b" style="width: 16px;">НС</TH>
+</TR>
+<TR>
+  <TH class="t">&nbsp;</TH>
+  <TH class="tr" colspan=2>°C</TH>
+  <TH class="tr" colspan=2>°C</TH>
+  <TH class="tr" colspan=2>°C</TH>
+  <TH class="tr" colspan=2>кгс/см2</TH>
+  <TH class="tr" colspan=2>кгс/см2</TH>
+  <TH class="tr" colspan=2>м3</TH>
+  <TH class="tr" colspan=2>м3</TH>
+  <TH class="tr" colspan=2>т</TH>
+  <TH class="tr" colspan=2>т</TH>
+  <TH class="tr" colspan=2>т</TH>
+  <TH class="tr" colspan=2>°C</TH>
+  <TH class="tr" colspan=2>кгс/см2</TH>
+  <TH class="tr" colspan=2>Гкал</TH>
+  <TH class="t">ч</TH>
+  <TH class="t">ч</TH>
+  <TH class="t">&nbsp;</TH>
+</TR>
+<TR>
+  <TD>01.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>64.92</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>43.71</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>21.20</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>33.934</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>33.755</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>33.371</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>33.371</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.709</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>02.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>63.59</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>42.75</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>20.84</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>33.367</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>33.208</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>32.840</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>32.840</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.686</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>03.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>68.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>44.63</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>23.37</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>33.525</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>33.311</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>32.914</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>32.914</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.770</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>04.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>74.11</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>47.66</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>26.45</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>33.753</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>33.452</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>33.016</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>33.016</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.875</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>05.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>76.41</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>47.80</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>28.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>32.584</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>32.251</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.826</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.826</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.912</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>06.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>79.37</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>47.24</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>32.12</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.588</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.213</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>29.823</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>29.823</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.960</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>07.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>82.67</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>46.91</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>35.76</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.438</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.007</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>29.618</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>29.618</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>1.061</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>08.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>83.86</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>47.06</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>36.80</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.824</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.363</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>29.971</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>29.971</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>1.105</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>09.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>83.81</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>46.70</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>37.11</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.615</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.157</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>29.770</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>29.770</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>1.107</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>10.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>81.36</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>45.32</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>36.04</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.857</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.427</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.054</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.054</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>1.085</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>11.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>83.47</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>46.76</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>36.72</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.517</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.058</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.655</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.655</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>1.127</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>12.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>85.09</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>49.70</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>35.39</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>32.266</NOBR></TD>  <TD class="lalignright">!</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.803</NOBR></TD>  <TD class="lalignright">!</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.349</NOBR></TD>  <TD class="lalignright">!</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.349</NOBR></TD>  <TD class="lalignright">!</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>1.112</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>23</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>1</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>*</NOBR></TD>
+</TR>
+<TR>
+  <TD>13.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>81.64</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>49.61</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>32.03</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>33.842</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>33.418</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>32.949</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>32.949</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>1.057</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>14.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>74.31</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>45.94</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>28.37</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>32.163</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.857</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.460</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.460</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.894</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>15.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>71.86</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>44.65</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>27.21</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.607</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.339</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.965</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.965</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.844</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>16.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>70.76</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>43.69</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>27.07</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.046</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.796</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.437</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.437</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.825</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>17.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>70.65</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>43.97</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>26.68</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.530</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.281</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.913</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.913</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.826</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>18.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>69.83</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>43.91</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>25.92</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.904</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.666</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.295</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.295</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.812</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>19.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>70.24</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>44.07</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>26.17</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.837</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.594</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.223</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.223</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.818</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>20.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>70.44</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>44.83</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>25.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>32.519</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>32.277</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.886</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.886</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.818</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>21.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>69.26</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>42.39</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>26.87</NOBR></TD>  <TD class="lalignright">&lt;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>18.386</NOBR></TD>  <TD class="lalignright">&lt;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>18.302</NOBR></TD>  <TD class="lalignright">&lt;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>17.996</NOBR></TD>  <TD class="lalignright">&lt;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>18.016</NOBR></TD>  <TD class="lalignright">&lt;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>-0.020</NOBR></TD>  <TD class="lalignright">#</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.484</NOBR></TD>  <TD class="lalignright">&lt;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>22</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>2</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>*</NOBR></TD>
+</TR>
+<TR>
+  <TD>22.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>75.20</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>45.33</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>29.87</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.375</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.111</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.702</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.702</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.919</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>23.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>77.99</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>47.04</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>30.95</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.836</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.576</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.137</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.137</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.934</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>24.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>78.33</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>47.29</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>31.03</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.760</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.472</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.046</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.046</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.934</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TD>25.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>75.71</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>46.95</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>28.76</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.881</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.608</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.179</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>31.179</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.898</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TH>Итого/Средн</TH>
+  <TH class="ralignright" style="width: 66px;"><NOBR>75.29</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 66px;"><NOBR>45.89</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 66px;"><NOBR>29.40</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 99px;"><NOBR>783.952</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 99px;"><NOBR>776.305</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 99px;"><NOBR>766.396</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 99px;"><NOBR>766.417</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 99px;"><NOBR>-0.020</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 99px;"><NOBR>22.571</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="alignright" style="width: 33px;"><NOBR>597</NOBR></TH>
+  <TH class="alignright" style="width: 33px;"><NOBR>3</NOBR></TH>
+  <TH class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TH>
+</TR>
+</TABLE>
+
+
+<P>
+<DIV>Итоговое потребление на начало и конец периода:</DIV>
+<TABLE border=1 cellspacing=0 cellpadding=0 class="invisible">
+<TR>
+  <TH class="b">Дата/время</TH>
+  <TH class="b" style="width: 137px;">V1</TH>
+  <TH class="b" style="width: 137px;">V2</TH>
+  <TH class="b" style="width: 137px;">M1</TH>
+  <TH class="b" style="width: 137px;">M2</TH>
+  <TH class="b" style="width: 137px;">dM</TH>
+  <TH class="b" style="width: 137px;">Qтв</TH>
+  <TH class="b" style="width: 71px;">ВНР</TH>
+  <TH class="b" style="width: 71px;">ВОС</TH>
+          <TD rowspan=5 valign=top align=left class="invisible">&nbsp;&nbsp;Условные обозначения:<BR>&nbsp;&nbsp;(&lt;) параметр &lt; min<BR>&nbsp;&nbsp;(&gt;) параметр &gt; max<BR>&nbsp;&nbsp;(!) отсут.питания<BR>&nbsp;&nbsp;(#) дисбаланс масс<BR>&nbsp;&nbsp;(R) реверс<BR>&nbsp;&nbsp;(o) отсут.теплонос.<BR>&nbsp;&nbsp;(X) аппар.неиспр.<BR></TD>
+</TR>
+<TR>
+  <TH class="t">&nbsp;</TH>
+  <TH class="t">м3</TH>
+  <TH class="t">м3</TH>
+  <TH class="t">т</TH>
+  <TH class="t">т</TH>
+  <TH class="t">т</TH>
+  <TH class="t">Гкал</TH>
+  <TH class="t">ч</TH>
+  <TH class="t">ч</TH>
+</TR>
+<TR>
+  <TD>31.12.22 23</TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>20279.743</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>20000.458</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>19485.636</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>19405.300</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>80.336</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>516.349</NOBR></TD>
+  <TD class="alignright" style="width: 66px;"><NOBR>27852</NOBR></TD>
+  <TD class="alignright" style="width: 66px;"><NOBR>673</NOBR></TD>
+</TR>
+<TR>
+  <TD>25.01.23 23</TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>21063.695</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>20776.763</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>20252.032</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>20171.717</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>80.315</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>538.920</NOBR></TD>
+  <TD class="alignright" style="width: 66px;"><NOBR>28449</NOBR></TD>
+  <TD class="alignright" style="width: 66px;"><NOBR>676</NOBR></TD>
+</TR>
+<TR>
+  <TH>Итого</TH>
+  <TH class="alignright" style="width: 132px;"><NOBR>783.952</NOBR></TH>
+  <TH class="alignright" style="width: 132px;"><NOBR>776.305</NOBR></TH>
+  <TH class="alignright" style="width: 132px;"><NOBR>766.396</NOBR></TH>
+  <TH class="alignright" style="width: 132px;"><NOBR>766.417</NOBR></TH>
+  <TH class="alignright" style="width: 132px;"><NOBR>-0.020</NOBR></TH>
+  <TH class="alignright" style="width: 132px;"><NOBR>22.571</NOBR></TH>
+  <TH class="alignright" style="width: 66px;"><NOBR>597</NOBR></TH>
+  <TH class="alignright" style="width: 66px;"><NOBR>3</NOBR></TH>
+</TR>
+</TABLE>
+
+</P>
+
+<P><PRE>Представитель абонента ____________ Представитель снабжающей организации ____________</PRE></P>
+
+<P>&nbsp;</P>
+
+
+
+
+<P><PRE>
+                                 ОТЧЕТ
+                    о суточных параметрах теплоснабжения
+                             за 26/01/23г.
+   Абонент: Д,С 87  Карамелька
+   Адрес:Зенитчиков 15а
+   Договор N:000000000                        Тип расходомера:___________
+   Тепловычислитель ТВ7-03    сет.N  000      Пределы измерений:
+   Договорные расходы:                        G1 max =   15.00 м3/ч  G1 min =    0.02 м3/ч
+   М сет.воды=______т.сут Мгвс=______ т.сут   G2 max =   15.00 м3/ч  G2 min =    0.02 м3/ч
+   tхв: догов., tхд =    5.00°C               
+
+   Серийный номер 19077493, БД=1, ТВ1, СИ=6, КТ3=0, ФРТ=1 КСН=0x69FE
+</PRE></P>
+<TABLE border=1 cellspacing=0 cellpadding=0>
+<TR>
+  <TH class="b">Дата/время</TH>
+  <TH class="br" style="width: 99px;" colspan=2>t1</TH>
+  <TH class="br" style="width: 99px;" colspan=2>t2</TH>
+  <TH class="br" style="width: 77px;" colspan=2>dt</TH>
+  <TH class="br" style="width: 88px;" colspan=2>P1</TH>
+  <TH class="br" style="width: 88px;" colspan=2>P2</TH>
+  <TH class="br" style="width: 132px;" colspan=2>V1</TH>
+  <TH class="br" style="width: 132px;" colspan=2>V2</TH>
+  <TH class="br" style="width: 132px;" colspan=2>M1</TH>
+  <TH class="br" style="width: 132px;" colspan=2>M2</TH>
+  <TH class="br" style="width: 110px;" colspan=2>dM</TH>
+  <TH class="br" style="width: 99px;" colspan=2>tx</TH>
+  <TH class="br" style="width: 88px;" colspan=2>Px</TH>
+  <TH class="br" style="width: 110px;" colspan=2>Qтв</TH>
+  <TH class="b" style="width: 38px;">ВНР</TH>
+  <TH class="b" style="width: 38px;">ВОС</TH>
+  <TH class="b" style="width: 16px;">НС</TH>
+</TR>
+<TR>
+  <TH class="t">&nbsp;</TH>
+  <TH class="tr" colspan=2>°C</TH>
+  <TH class="tr" colspan=2>°C</TH>
+  <TH class="tr" colspan=2>°C</TH>
+  <TH class="tr" colspan=2>кгс/см2</TH>
+  <TH class="tr" colspan=2>кгс/см2</TH>
+  <TH class="tr" colspan=2>м3</TH>
+  <TH class="tr" colspan=2>м3</TH>
+  <TH class="tr" colspan=2>т</TH>
+  <TH class="tr" colspan=2>т</TH>
+  <TH class="tr" colspan=2>т</TH>
+  <TH class="tr" colspan=2>°C</TH>
+  <TH class="tr" colspan=2>кгс/см2</TH>
+  <TH class="tr" colspan=2>Гкал</TH>
+  <TH class="t">ч</TH>
+  <TH class="t">ч</TH>
+  <TH class="t">&nbsp;</TH>
+</TR>
+<TR>
+  <TD>26.01.23 23</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>70.28</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>44.07</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>26.21</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>30.071</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>29.878</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>29.508</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>29.508</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="ralignright" style="width: 99px;"><NOBR>0.775</NOBR></TD>  <TD class="lalignright">&nbsp;</TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>24</NOBR></TD>
+  <TD class="alignright" style="width: 33px;"><NOBR>0</NOBR></TD>
+  <TD class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TD>
+</TR>
+<TR>
+  <TH>Итого/Средн</TH>
+  <TH class="ralignright" style="width: 66px;"><NOBR>70.28</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 66px;"><NOBR>44.07</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 66px;"><NOBR>26.21</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 66px;"><NOBR>6.50</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 66px;"><NOBR>4.60</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 99px;"><NOBR>30.071</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 99px;"><NOBR>29.878</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 99px;"><NOBR>29.508</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 99px;"><NOBR>29.508</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 99px;"><NOBR>0.000</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 66px;"><NOBR>5.00</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 66px;"><NOBR>3.00</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="ralignright" style="width: 99px;"><NOBR>0.775</NOBR></TH>  <TH class="lalignright">&nbsp;</TH>
+  <TH class="alignright" style="width: 33px;"><NOBR>24</NOBR></TH>
+  <TH class="alignright" style="width: 33px;"><NOBR>0</NOBR></TH>
+  <TH class="alignright" style="width: 11px;"><NOBR>&nbsp;</NOBR></TH>
+</TR>
+</TABLE>
+
+
+<P>
+<DIV>Итоговое потребление на начало и конец периода:</DIV>
+<TABLE border=1 cellspacing=0 cellpadding=0 class="invisible">
+<TR>
+  <TH class="b">Дата/время</TH>
+  <TH class="b" style="width: 137px;">V1</TH>
+  <TH class="b" style="width: 137px;">V2</TH>
+  <TH class="b" style="width: 137px;">M1</TH>
+  <TH class="b" style="width: 137px;">M2</TH>
+  <TH class="b" style="width: 137px;">dM</TH>
+  <TH class="b" style="width: 137px;">Qтв</TH>
+  <TH class="b" style="width: 71px;">ВНР</TH>
+  <TH class="b" style="width: 71px;">ВОС</TH>
+          <TD rowspan=5 valign=top align=left class="invisible">&nbsp;&nbsp;Условные обозначения:<BR>&nbsp;&nbsp;(&lt;) параметр &lt; min<BR>&nbsp;&nbsp;(&gt;) параметр &gt; max<BR>&nbsp;&nbsp;(!) отсут.питания<BR>&nbsp;&nbsp;(#) дисбаланс масс<BR>&nbsp;&nbsp;(R) реверс<BR>&nbsp;&nbsp;(o) отсут.теплонос.<BR>&nbsp;&nbsp;(X) аппар.неиспр.<BR></TD>
+</TR>
+<TR>
+  <TH class="t">&nbsp;</TH>
+  <TH class="t">м3</TH>
+  <TH class="t">м3</TH>
+  <TH class="t">т</TH>
+  <TH class="t">т</TH>
+  <TH class="t">т</TH>
+  <TH class="t">Гкал</TH>
+  <TH class="t">ч</TH>
+  <TH class="t">ч</TH>
+</TR>
+<TR>
+  <TD>25.01.23 23</TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>21063.695</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>20776.763</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>20252.032</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>20171.717</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>80.315</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>538.920</NOBR></TD>
+  <TD class="alignright" style="width: 66px;"><NOBR>28449</NOBR></TD>
+  <TD class="alignright" style="width: 66px;"><NOBR>676</NOBR></TD>
+</TR>
+<TR>
+  <TD>26.01.23 23</TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>21093.766</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>20806.642</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>20281.540</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>20201.224</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>80.315</NOBR></TD>
+  <TD class="alignright" style="width: 132px;"><NOBR>539.694</NOBR></TD>
+  <TD class="alignright" style="width: 66px;"><NOBR>28473</NOBR></TD>
+  <TD class="alignright" style="width: 66px;"><NOBR>676</NOBR></TD>
+</TR>
+<TR>
+  <TH>Итого</TH>
+  <TH class="alignright" style="width: 132px;"><NOBR>30.071</NOBR></TH>
+  <TH class="alignright" style="width: 132px;"><NOBR>29.879</NOBR></TH>
+  <TH class="alignright" style="width: 132px;"><NOBR>29.508</NOBR></TH>
+  <TH class="alignright" style="width: 132px;"><NOBR>29.508</NOBR></TH>
+  <TH class="alignright" style="width: 132px;"><NOBR>0.000</NOBR></TH>
+  <TH class="alignright" style="width: 132px;"><NOBR>0.775</NOBR></TH>
+  <TH class="alignright" style="width: 66px;"><NOBR>24</NOBR></TH>
+  <TH class="alignright" style="width: 66px;"><NOBR>0</NOBR></TH>
+</TR>
+</TABLE>
+
+</P>
+
+<P><PRE>Представитель абонента ____________ Представитель снабжающей организации ____________</PRE></P>
+
+<P>&nbsp;</P>
+
+
+
+
+</BODY>
+</HTML>

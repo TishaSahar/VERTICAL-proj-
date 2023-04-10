@@ -3,55 +3,47 @@ from openpyxl.styles import Border, Side, PatternFill, Font, GradientFill, Align
 import pyexcel
 import os
 from datetime import datetime
-
-
-months = {'01':'январь', '02':'февраль', '03':'март', '04':'апрель',\
-         '05':'май', '06':'июнь', '07':'июль', '08':'август',\
-         '09':'сеньтябрь', '10':'октябрь', '11':'ноябрь', '12':'декабрь'}
-def get_month(m='01-01-2023'):
-    return months[m[3:5]]
-
-
-def get_head_data(my_dir, factory_num, inp_type):
-    header_ws = load_workbook(my_dir + '\Templates\HeadDat.xlsx', data_only=False).active
-    head_data = {'factory_num': '', 'complex_num': '', 'consumer': '', 'order': '', 'adress': '', 'cold_temp': '5,0', 'save_folder': ''}
-    for i in range(2, 426):
-        if  str(header_ws['A' + str(i)].value) in factory_num + '_' + inp_type:
-            head_data['factory_num'] = header_ws['A' + str(i)].value.replace('_1', '').replace('_2', '')
-            head_data['complex_num'] = header_ws['C' + str(i)].value
-            head_data['consumer'] = header_ws['D' + str(i)].value
-            head_data['order'] = header_ws['E' + str(i)].value
-            head_data['adress'] = header_ws['F' + str(i)].value
-            head_data['cold_temp'] = header_ws['H' + str(i)].value
-            head_data['save_folder'] = header_ws['K' + str(i)].value
-        elif '-' in factory_num and str(header_ws['A' + str(i)].value.split('_')[0]) in factory_num + '_' + inp_type:
-            head_data['factory_num'] = factory_num
-            head_data['complex_num'] = header_ws['C' + str(i)].value
-            head_data['consumer'] = header_ws['D' + str(i)].value
-            head_data['order'] = header_ws['E' + str(i)].value
-            head_data['adress'] = header_ws['F' + str(i)].value
-            head_data['cold_temp'] = header_ws['H' + str(i)].value
-            head_data['save_folder'] = header_ws['K' + str(i)].value
-    
-    return head_data
+from HeadData import *
 
 
 class TV7Parser:
     def __init__(self, data_list, curr_dir, save_dir):
+        self.summary_rep = ''
         self.my_parsing_files = []
         self.my_dir = curr_dir
         self.save_dir = save_dir
-        for file in data_list['ТВ-7']:
-            if 'xlsx' not in file:
+
+        if len(data_list) != 0:
+            for file in data_list:
+                head_data = {'factory_num': '', 'complex_num': '', 'consumer': '', 'order': '', 'adress': '', 'cold_temp': '5,0', 'save_folder': '', 'type': ''}
                 if 'xls' in file:
-                    pyexcel.save_book_as(file_name=file,
-                                dest_file_name=file + 'x')
-                    file += 'x'
+                    if 'xlsx' not in file:
+                        pyexcel.save_book_as(file_name=file,
+                                    dest_file_name=file + 'x')
+                        file += 'x'
+
+                    rep_type = '1'
+                    if 'ГВС' in file[0].upper():
+                        rep_type = '2'
+                    ws = load_workbook(file).active
+                    for row in ws.iter_rows(max_row=16):
+                        if row[0].value == None: 
+                            continue
+                        if 'Серийный номер' in str(row[0].value):
+                            if 'ТВ2' in row[0].value:
+                                rep_type = '2'
+                            if 'ТВ1' in row[0].value:
+                                rep_type = '1'
+                            head_data = get_head_data(self.my_dir, str(row[0].value).split('Серийный номер ')[1].split(',')[0], rep_type)
+                    if head_data['type'] != None:
+                        if 'ТВ-7' in str(head_data['type']).replace(' ', ''):
+                            self.my_parsing_files.append([file, load_workbook(file).active])
+                        else:
+                            continue
+                    else:
+                        print('Can not to expect type in: ',  str(file))
                 else:
-                    print('TMK wrong file!')
                     continue
-                
-            self.my_parsing_files.append([file, load_workbook(file).active])
 
 
     def get_columns(self, row):
@@ -65,6 +57,22 @@ class TV7Parser:
             for key in heat_cols.keys():
                 if key in cell.value and heat_cols[key] == -1:
                     heat_cols[key] = ind
+
+            if 't3' in cell.value and heat_cols['t1'] == -1:
+                heat_cols['t1'] = ind
+            if 't4' in cell.value and heat_cols['t2'] == -1:
+                heat_cols['t2'] = ind
+
+            if 'V3' in cell.value and heat_cols['V1'] == -1 and 'dV' not in cell.value:
+                heat_cols['V1'] = ind
+            if 'V4' in cell.value and heat_cols['V2'] == -1 and 'dV' not in cell.value:
+                heat_cols['V2'] = ind
+
+            if 'M3' in cell.value and heat_cols['M1'] == -1 and 'dM' not in cell.value:
+                heat_cols['M1'] = ind
+            if 'M4' in cell.value and heat_cols['M2'] == -1 and 'dM' not in cell.value:
+                heat_cols['M2'] = ind
+
             if 'H.C.' in cell.value:
                 heat_cols['НС'] = ind
             if 'BНP' in cell.value:
@@ -98,6 +106,7 @@ class TV7Parser:
 
         for row in file[1].iter_rows(min_row=row_index):
             num = lambda t: round(float(row[data_indexes[t]].value), 2) if row[data_indexes[t]].value != None else ' - '
+            num3 = lambda t: round(float(row[data_indexes[t]].value), 3) if row[data_indexes[t]].value != None else ' - '
             st_row = lambda n: str(n).replace('.', ',')
             curr_date = ''
             if 'Итого:' == row[0].value or 'Итого/Средн' == row[0].value:
@@ -139,29 +148,29 @@ class TV7Parser:
                 ws['D' + str(out_index)] = st_row(num('V1'))
                 ws['D' + str(out_index + 1)] = str(round(v1_sum, 2)).replace('.', ',')
                 ws['H' + str(out_index)] = st_row(round(num('V1'), 2))
-                ws['H' + str(out_index + 1)] = str(abs(round(v1_sum, 2))).replace('.', ',')
+                ws['H' + str(out_index + 1)] = str(abs(round(v1_sum, 3))).replace('.', ',')
             if data_indexes['M1'] != -1:
                 if num('M1') != ' - ': m1_sum += num('M1')
                 ws['E' + str(out_index)] = st_row(num('M1'))
                 ws['E' + str(out_index + 1)] = str(round(m1_sum, 2)).replace('.', ',')
                 ws['I' + str(out_index)] = st_row(num('M1'))
-                ws['I' + str(out_index + 1)] = str(abs(round(m1_sum, 2))).replace('.', ',')
+                ws['I' + str(out_index + 1)] = str(abs(round(m1_sum, 3))).replace('.', ',')
             if data_indexes['V2'] != -1 and num('V2') != ' - ':
                 v2_sum += num('V2')
                 ws['F' + str(out_index)] = st_row(num('V2'))
-                ws['F' + str(out_index + 1)] = str(round(v2_sum, 2)).replace('.', ',')
-                ws['H' + str(out_index)] = st_row(abs(round(num('V2') - num('V1'), 2)))
-                ws['H' + str(out_index + 1)] = str(abs(round(v2_sum - v1_sum, 2))).replace('.', ',')
+                ws['F' + str(out_index + 1)] = str(round(v2_sum, 3)).replace('.', ',')
+                ws['H' + str(out_index)] = st_row(round(num('V1') - num('V2'), 2))
+                ws['H' + str(out_index + 1)] = str(round(v1_sum - v2_sum, 3)).replace('.', ',')
             if data_indexes['M2'] != -1:
                 if num('M2') != ' - ': m2_sum += num('M2')
                 ws['G' + str(out_index)] = st_row(num('M2'))
-                ws['G' + str(out_index + 1)] = str(round(m2_sum, 2)).replace('.', ',')
-                ws['I' + str(out_index)] = st_row(abs(round(num('M2') - num('M1'), 2)))
-                ws['I' + str(out_index + 1)] = str(abs(round(m2_sum - m1_sum, 2))).replace('.', ',')
+                ws['G' + str(out_index + 1)] = str(round(m2_sum, 3)).replace('.', ',')
+                ws['I' + str(out_index)] = st_row(round(num('M1') - num('M2'), 2))
+                ws['I' + str(out_index + 1)] = str(round(m1_sum - m2_sum, 3)).replace('.', ',')
             if data_indexes['Q'] != -1:
-                if num('Q') != ' - ': q_sum += num('Q')
-                ws['J' + str(out_index)] = st_row(num('Q'))
-                ws['J' + str(out_index + 1)] = str(round(q_sum, 2)).replace('.', ',')
+                if num('Q') != ' - ': q_sum += num3('Q')
+                ws['J' + str(out_index)] = st_row(num3('Q'))
+                ws['J' + str(out_index + 1)] = str(round(q_sum, 3)).replace('.', ',')
             if data_indexes['ВНР'] != -1:
                 if num('ВНР') != ' - ': vnr += num('ВНР')
                 ws['K' + str(out_index)] = st_row(num('ВНР'))
@@ -179,8 +188,8 @@ class TV7Parser:
             row_index += 1
 
         if a_resoul_flag == True:
-            ws['B' + str(out_index + 1)] = round(t1_avg/(out_index - 17), 2)
-            ws['C' + str(out_index + 1)] = round(t2_avg/(out_index - 17), 2)
+            ws['B' + str(out_index + 1)] = round(t1_avg/(out_index - 18), 2)
+            ws['C' + str(out_index + 1)] = round(t2_avg/(out_index - 18), 2)
 
             sec_row = out_index + 1
             # Parse resoult table
@@ -283,56 +292,72 @@ class TV7Parser:
         if rep_type == '1':
             str_rep = '_отопл'
         
-        template.save(curr_dir + '/' + head_data['adress'].replace('/', 'к') + str_rep + '.xlsx')
-        report += curr_dir + '/' + head_data['adress'].replace('/', 'к') + str_rep +'.xlsx'
+        name = head_data['consumer'].replace(',', '').replace('/', 'к').replace('"', '').replace('<','').replace('>','').replace('?','').replace('*','').replace('|','') + \
+            ' - ' + head_data['adress'].replace(',', '').replace('/', 'к').replace('"', '').replace('<','').replace('>','').replace('?','').replace('*','').replace('|','')
+
+        while name in self.summary_rep:
+            name += '_2'
+
+        template.save(curr_dir + '/' + name + str_rep + '.xlsx')
+        report += curr_dir + '/' + name + str_rep +'.xlsx'
         return [report, row_index, out_index, [t1_avg, t2_avg, m1_sum, m2_sum, v1_sum, v2_sum, q_sum, vnr, vos, sum_err], date_from, date_to]
 
 
     def __call__(self):
-        summary_rep = '\tТВ - 7\n'
-
+        self.summary_rep = '\tТВ - 7\n'
+        print(len(self.my_parsing_files))
         for file in self.my_parsing_files:
             rep_type = '1'
             if 'ГВС' in file[0].upper():
                 rep_type = '2'
             move_index = 1
+            count_of_tables = 0
+            for row in file[1].iter_rows():
+                if row[0].value == None:
+                    continue
+                if 'ОТЧЕТ' in str(row[0].value):
+                    count_of_tables += 1
+
             for row in file[1].iter_rows(max_row=16):
                 if row[0].value == None: 
                     move_index += 1
                     continue
                 if 'Серийный номер' in row[0].value:
-                    head_data = get_head_data(self.my_dir, str(row[0].value).split('Серийный номер ')[1].split(',')[0], rep_type)
                     if 'ТВ2' in row[0].value:
                         rep_type = '2'
                     if 'ТВ1' in row[0].value:
                         rep_type = '1'
+                    head_data = get_head_data(self.my_dir, str(row[0].value).split('Серийный номер ')[1].split(',')[0], rep_type)
                 if 'Дата/время' in row[0].value:
                     data_indexes = self.get_columns(row)
                     break
                 move_index += 1
 
-            template = load_workbook(self.my_dir + '\Templates\VEC_Template.xlsx',  read_only=False, data_only=False)
-            report, row_inx, out_row_indx, summs, date_from, date_to = self.build_xls(file, rep_type, template, data_indexes, head_data, start_read_index=move_index, a_resoul_flag=False)
-
-            move_index = 10
-            for row in file[1].iter_rows(min_row=row_inx+10):
-                if row[0].value == None: 
+            if count_of_tables == 2:
+                template = load_workbook(self.my_dir + '\Templates\VEC_Template.xlsx',  read_only=False, data_only=False)
+                report, row_inx, out_row_indx, summs, date_from, date_to = self.build_xls(file, rep_type, template, data_indexes, head_data, start_read_index=move_index, a_resoul_flag=False)
+                move_index = 10
+                for row in file[1].iter_rows(min_row=row_inx+10):
+                    if row[0].value == None: 
+                        move_index += 1
+                        continue
+                    if 'Серийный номер' in row[0].value:
+                        head_data = get_head_data(self.my_dir, str(row[0].value).split('Серийный номер ')[1].split(',')[0], rep_type)
+                        if 'ТВ2' in row[0].value:
+                            rep_type = '2'
+                        if 'ТВ1' in row[0].value:
+                            rep_type = '1'
+                    if 'Дата/время' in row[0].value:
+                        data_indexes = self.get_columns(row)
+                        break
                     move_index += 1
-                    continue
-                if 'Серийный номер' in row[0].value:
-                    head_data = get_head_data(self.my_dir, str(row[0].value).split('Серийный номер ')[1].split(',')[0], rep_type)
-                    if 'ТВ2' in row[0].value:
-                        rep_type = '2'
-                    if 'ТВ1' in row[0].value:
-                        rep_type = '1'
-                if 'Дата/время' in row[0].value:
-                    data_indexes = self.get_columns(row)
-                    break
-                move_index += 1
 
-            data_indexes = self.get_columns(file[1][row_inx+move_index])
-            template = load_workbook(report,  read_only=False, data_only=False)
-            report, row_inx, out_row_indx, summs, date_from, date_to = self.build_xls(file, rep_type, template, data_indexes, head_data, row_inx + move_index, out_row_indx, summs, True, date_from=date_from, date_to=date_to)
-            summary_rep += '\n' + report.replace(self.save_dir, '') + '\n'
+                data_indexes = self.get_columns(file[1][row_inx+move_index])
+                template = load_workbook(report,  read_only=False, data_only=False)
+                report, row_inx, out_row_indx, summs, date_from, date_to = self.build_xls(file, rep_type, template, data_indexes, head_data, row_inx + move_index, out_row_indx, summs, True, date_from=date_from, date_to=date_to)
+            else:
+                template = load_workbook(self.my_dir + '\Templates\VEC_Template.xlsx',  read_only=False, data_only=False)
+                report, row_inx, out_row_indx, summs, date_from, date_to = self.build_xls(file, rep_type, template, data_indexes, head_data, start_read_index=move_index, a_resoul_flag=True)
 
-        return summary_rep
+            self.summary_rep += '\n' + report.replace(self.save_dir, '') + '\n'
+        return self.summary_rep

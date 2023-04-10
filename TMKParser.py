@@ -3,63 +3,58 @@ from openpyxl.styles import Border, Side, PatternFill, Font, GradientFill, Align
 import pyexcel
 import os
 from datetime import datetime
-
-months = {'01':'январь', '02':'февраль', '03':'март', '04':'апрель',\
-         '05':'май', '06':'июнь', '07':'июль', '08':'август',\
-         '09':'сеньтябрь', '10':'октябрь', '11':'ноябрь', '12':'декабрь'}
-def get_month(m='01-01-2023'):
-    return months[m[3:5]]
-
-
-def get_head_data(my_dir, factory_num, inp_type):
-    factory_num = factory_num.replace('-', '').replace('_гвс', '').split(' ')[0]
-    header_ws = load_workbook(my_dir + '\Templates\HeadDat.xlsx', data_only=False).active
-    head_data = {'factory_num': '', 'complex_num': '', 'consumer': '', 'order': '', 'adress': '', 'cold_temp': '5,0', 'save_folder': ''}
-    for i in range(2, 426):
-        if  str(header_ws['A' + str(i)].value) in factory_num + '_' + inp_type:
-            head_data['factory_num'] = header_ws['A' + str(i)].value.replace('_1', '').replace('_2', '')
-            head_data['complex_num'] = header_ws['C' + str(i)].value
-            head_data['consumer'] = header_ws['D' + str(i)].value
-            head_data['order'] = header_ws['E' + str(i)].value
-            head_data['adress'] = header_ws['F' + str(i)].value
-            head_data['cold_temp'] = header_ws['H' + str(i)].value
-            head_data['save_folder'] = header_ws['K' + str(i)].value
-        elif '-' in factory_num and str(header_ws['A' + str(i)].value).split('_')[0] in factory_num + '_' + inp_type:
-            head_data['factory_num'] = factory_num
-            head_data['complex_num'] = header_ws['C' + str(i)].value
-            head_data['consumer'] = header_ws['D' + str(i)].value
-            head_data['order'] = header_ws['E' + str(i)].value
-            head_data['adress'] = header_ws['F' + str(i)].value
-            head_data['cold_temp'] = header_ws['H' + str(i)].value
-            head_data['save_folder'] = header_ws['K' + str(i)].value
-    
-    return head_data
+from SPTParser import SPTParser
+from HeadData import *
 
 
 class TMKParser:
     def __init__(self, data_list, curr_dir, save_dir):
+        self.sum_report = ''
         self.my_parsing_files = []
         self.my_dir = curr_dir
         self.save_dir = save_dir
-        for file in data_list['ТМК']:
+        for file in data_list:
             if 'xlsx' not in file:
                 if 'xls' in file:
                     pyexcel.save_book_as(file_name=file,
                                 dest_file_name=file + 'x')
                     file += 'x'
-                else:
-                    print('TMK wrong file!')
-                    continue
-                
-            self.my_parsing_files.append([file, load_workbook(file).active])
+                    
+            if 'xlsx' in file:
+                calc_type = None
+                ws = load_workbook(file).active
+                rep_type = '1'
+                if 'ГВС' in str(file.upper()) or 'Тепловая система 2' == str(ws['D9'].value) or 'Тепловой ввод №2' in str(ws['D6'].value):
+                    rep_type = '2'
 
+                # If visual type is as SPT
+                ws = load_workbook(file).active
+                if ws['A1'].value != None:
+                    if '_1' in str(ws['A1'].value):
+                        calc_type = get_head_data(self.my_dir, str(ws['A1'].value), '1')['type']
+                    if '_2' in str(ws['A1'].value):
+                        calc_type = get_head_data(self.my_dir, str(ws['A1'].value), '2')['type']
 
+                # Is it really TMK file
+                if calc_type is None: 
+                    calc_type = get_head_data(self.my_dir, self.get_factory_num(ws[1]), rep_type)['type']
+
+                if calc_type != None:
+                    if 'ТМК' in calc_type:
+                        self.my_parsing_files.append([file, load_workbook(file).active])
+                    else:
+                        continue
+            else:
+                print('TMK wrong file!')
+                continue
+
+    # Get str with factory num by row in TMK file
     def get_factory_num(self, row):
         factory_num = ''
         for col in row:
             if col.value == None:
                 continue
-            if '№' in col.value:
+            if ('ТМК' in col.value or 'Отчет' in col.value) and '№' in col.value:
                 factory_num = str(col.value).split('№')[1].replace(' ', '')												
         return factory_num
 
@@ -93,7 +88,7 @@ class TMKParser:
                 heat_cols['M2'] = ind
             if 'Q' in cell.value and heat_cols['Q'] == -1:
                 heat_cols['Q'] = ind
-            if ('Tр,' in cell.value or 'Время' in cell.value or 'Tраб' in cell.value or 'T1' in cell.value) and heat_cols['Tн'] == -1:
+            if ('Tр,' in cell.value or 'Время' in cell.value or 'Tраб' in cell.value or 'T1' in cell.value or 'T2' in cell.value) and heat_cols['Tн'] == -1:
                 heat_cols['Tн'] = ind
             if 'Tн' in cell.value and heat_cols['Tн'] == -1:
                 heat_cols['Tн'] = ind
@@ -204,14 +199,14 @@ class TMKParser:
                 if num('V2') != ' - ': v2_sum += num('V2')
                 ws['F' + str(out_index)] = st_row(num('V2'))
                 ws['F' + str(out_index + 1)] = str(round(v2_sum, 2)).replace('.', ',')
-                if num('V2') != ' - ' and num('V1') != ' - ':ws['H' + str(out_index)] = st_row(abs(round(num('V2') - num('V1'), 2)))
-                ws['H' + str(out_index + 1)] = str(abs(round(v2_sum - v1_sum, 2))).replace('.', ',')
+                if num('V2') != ' - ' and num('V1') != ' - ': ws['H' + str(out_index)] = st_row(round(num('V1') - num('V2'), 2))
+                ws['H' + str(out_index + 1)] = str(round(v1_sum - v2_sum, 2)).replace('.', ',')
             if data_indexes['M2'] != -1:
                 if num('M2') != ' - ': m2_sum += num('M2')
                 ws['G' + str(out_index)] = st_row(num('M2'))
                 ws['G' + str(out_index + 1)] = str(round(m2_sum, 2)).replace('.', ',')
-                if num('M2') != ' - ' and num('M1') != ' - ': ws['I' + str(out_index)] = st_row(abs(round(num('M2') - num('M1'), 2)))
-                ws['I' + str(out_index + 1)] = str(abs(round(m2_sum - m1_sum, 2))).replace('.', ',')
+                if num('M2') != ' - ' and num('M1') != ' - ': ws['I' + str(out_index)] = st_row(round(num('M1') - num('M2'), 2))
+                ws['I' + str(out_index + 1)] = str(round(m1_sum - m2_sum, 2)).replace('.', ',')
             if data_indexes['Q'] != -1:
                 if num('Q') != ' - ': q_sum += num('Q')
                 ws['J' + str(out_index)] = st_row(num('Q'))
@@ -228,8 +223,8 @@ class TMKParser:
             out_index += 1
             row_index += 1
 
-        ws['B' + str(out_index + 1)] = round(t1_avg/(out_index - 17), 2)
-        ws['C' + str(out_index + 1)] = round(t2_avg/(out_index - 17), 2)
+        ws['B' + str(out_index + 1)] = round(t1_avg/(out_index - 18), 2)
+        ws['C' + str(out_index + 1)] = round(t2_avg/(out_index - 18), 2)
 
         sec_row = out_index + 1
         sum_table_index = row_index + 4
@@ -239,6 +234,8 @@ class TMKParser:
             sum_table_index += 1
         data_indexes = self.get_columns(file[1][sum_table_index], {'Время': -1, 't1': -1, 't2': -1,'V1': -1,'M1': -1,'V2': -1,'M2': -1, 'Q': -1, 'Tн': -1,'ВОС': -1, 'НС': -1})
         summary_data = file[1][sum_table_index + 1]
+        if summary_data[0] == None:
+            report += 'Не найдена таблица с итогами в отчете: ' + head_data['factory_num'] + '\n'
 
         v1_start = 0; v2_start = 0; m1_start = 0; m2_start = 0; q_start = 0; vnr_start = 0; vos_start = 0
         float_time_finnaly = lambda t: self.time_conv(t, summary_data, data_indexes)
@@ -261,6 +258,10 @@ class TMKParser:
         if float_time_finnaly('Tн') != ' - ' and data_indexes['Tн'] != -1:
             vnr_start = float_time_finnaly('Tн')
             vnr += float_time_finnaly('Tн')
+        if float_time_finnaly('ВОС') != ' - ' and data_indexes['ВОС'] != -1:
+            vnr_start = float_time_finnaly('ВОС')
+            vnr += float_time_finnaly('ВОС')
+
 
         sec_row += 3
         # A resoult table 
@@ -284,6 +285,7 @@ class TMKParser:
                 ws.cell(r, 7).alignment = Alignment(horizontal="center", vertical="center")
                 ws.cell(r, 8).border = Border(top=thin, left=thin, right=thin, bottom=thin)
                 ws.cell(r, 8).alignment = Alignment(horizontal="center", vertical="center")
+
             q_col = 'F'; vnr_col = 'G'; vos_col = 'H'
             ws['F' + str(sec_row - 1)] = 'Q, Гкал'
             ws['G' + str(sec_row - 1)] = 'ВНР, час'
@@ -316,21 +318,39 @@ class TMKParser:
         if rep_type == '1':
             str_rep = '_отопл'
 
-        template.save(curr_dir + '/' + head_data['adress'].replace('/', 'к') + str_rep + '.xlsx')
-        report += head_data['save_folder'] + '/' + head_data['adress'].replace('/', 'к') + str_rep +'.xlsx'
+        name = head_data['consumer'].replace(',', '').replace('/', 'к').replace('"', '').replace('<','').replace('>','').replace('?','').replace('*','').replace('|','') + \
+            ' - ' + head_data['adress'].replace(',', '').replace('/', 'к').replace('"', '').replace('<','').replace('>','').replace('?','').replace('*','').replace('|','')
+        while name in self.sum_report:
+            name += '_2'
+        template.save(curr_dir + '/' + name + str_rep + '.xlsx')
+        report += head_data['save_folder'] + '/' + name + str_rep +'.xlsx'
 
         return report + '\n'
 
 
     def __call__(self):
-        report = '\tТМК\n'
-
+        self.sum_report = '\tТМК\n'
+        print(len(self.my_parsing_files))
         for file in self.my_parsing_files:
+            if file[1]['A1'].value != None:
+                if 'Время' in str(file[1]['A2'].value):
+                    spt_parser = SPTParser([], self.my_dir, self.save_dir)
+                    columns, gvs_cols = spt_parser.get_columns(list(file[1].rows)[1])
+                    if '_1' in str(file[1]['A1'].value):
+                        self.sum_report += spt_parser.build_xls(file, columns, '1', 2)
+                        continue
+                    elif '_2' in str(file[1]['A1'].value):
+                        self.sum_report += spt_parser.build_xls(file, columns, '2', 2)
+                        continue
+                    else: # '_' not in str(file[1]['A1'].value):
+                        self.sum_report += spt_parser.build_xls(file, columns, '1', 2)
+                        self.sum_report += spt_parser.build_xls(file, columns, '2', 2)
+                        continue
+
             rep_type = '1'
             if 'ГВС' in str(file[0].upper()) or 'Тепловая система 2' == str(file[1]['D9'].value) or 'Тепловой ввод №2' in str(file[1]['D6'].value):
                 rep_type = '2'
-            report += self.build_xls(file, rep_type) + '\n' 
 
-            #if 'Тепловой ввод №2' in str(file[1]['AD6'].value):
-            #    report += self.build_xls(file, rep_type, 30) + '\n' 
-        return report
+            self.sum_report += self.build_xls(file, rep_type) + '\n' 
+
+        return self.sum_report
