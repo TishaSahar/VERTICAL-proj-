@@ -3,58 +3,63 @@ from openpyxl.styles import Border, Side, PatternFill, Font, GradientFill, Align
 import pyexcel
 import os
 from datetime import datetime
-
-months = {'01':'январь', '02':'февраль', '03':'март', '04':'апрель',\
-         '05':'май', '06':'июнь', '07':'июль', '08':'август',\
-         '09':'сеньтябрь', '10':'октябрь', '11':'ноябрь', '12':'декабрь'}
-def get_month(m='01-01-2023'):
-    return months[m[3:5]]
+from HeadData import *
 
 
-def get_head_data(my_dir, factory_num, inp_type):
-    header_ws = load_workbook(my_dir + '\Templates\HeadDat.xlsx', data_only=False).active
-    head_data = {'factory_num': '', 'complex_num': '', 'consumer': '', 'order': '', 'adress': '', 'cold_temp': '5,0', 'save_folder': ''}
-    for i in range(2, 426):
-        if  str(header_ws['A' + str(i)].value) in factory_num + '_' + inp_type:
-            head_data['factory_num'] = header_ws['A' + str(i)].value.replace('_1', '').replace('_2', '')
-            head_data['complex_num'] = header_ws['C' + str(i)].value
-            head_data['consumer'] = header_ws['D' + str(i)].value
-            head_data['order'] = header_ws['E' + str(i)].value
-            head_data['adress'] = header_ws['F' + str(i)].value
-            head_data['cold_temp'] = header_ws['H' + str(i)].value
-            head_data['save_folder'] = header_ws['K' + str(i)].value
-        elif '-' in factory_num and str(header_ws['A' + str(i)].value.split('_')[0]) in factory_num + '_' + inp_type:
-            head_data['factory_num'] = factory_num
-            head_data['complex_num'] = header_ws['C' + str(i)].value
-            head_data['consumer'] = header_ws['D' + str(i)].value
-            head_data['order'] = header_ws['E' + str(i)].value
-            head_data['adress'] = header_ws['F' + str(i)].value
-            head_data['cold_temp'] = header_ws['H' + str(i)].value
-            head_data['save_folder'] = header_ws['K' + str(i)].value
-    
-    return head_data
+def err_spt(row, indexes):
+    err = ''
+    errs = {'1': '1', '0': '1'}
+    for indx in indexes:
+        cell = str(row[indx].value)
+        if indx == -1 or cell is None:
+            continue
+        for def_err in errs.keys():
+            if cell in def_err and errs[def_err] not in err:
+                err += errs[def_err]
+            l = cell.split(',')
+            for c in l:
+                if c == def_err and errs[def_err] not in err:
+                    err += errs[def_err]
+
+    return err
 
 
 class SPTParser:
     def __init__(self, data_list, curr_dir, save_dir):
+        self.report = ''
         self.my_parsing_files = []
         self.my_dir = curr_dir
         self.save_dir = save_dir
-        for file in data_list['СПТ']:
+        for file in data_list:
             if 'xlsx' not in file:
                 if 'xls' in file:
                     pyexcel.save_book_as(file_name=file,
                                 dest_file_name=file + 'x')
                     file += 'x'
+            if 'xlsx' in file:
+                rep_type = '1'
+                ws = load_workbook(file).active
+                if ws['A1'].value != None:
+                    if '_2' in str(ws['A1'].value) or 'ГВС' in str(ws['A1'].value):
+                        rep_type = '2'
+
+                if get_head_data(self.my_dir, str(ws['A1'].value), rep_type)['type'] != None:
+                    if 'СПТ' in get_head_data(self.my_dir, str(ws['A1'].value), rep_type)['type']:
+                        self.my_parsing_files.append([file, load_workbook(file).active])
+
+                    else:
+                        continue
                 else:
-                    print('SPT wrong file!')
                     continue
-            self.my_parsing_files.append([file, load_workbook(file).active])
+            else:
+                print('SPT wrong file!')
+                continue
+
 
     def get_columns(self, row):
         #print([cell.value for cell in row])
-        heat_cols = {'Время': 1, 't1(°C)': -1, 't2(°C)': -1,'V1': -1,'M1': -1,'V2': -1,'M2': -1, 'Q(Гкал)': -1, 'Tи(ч)': -1}
-        gvs_cols = {'Время': 1, 't1(°C)': -1, 't2(°C)': -1,'V1': -1,'M1': -1,'V2': -1,'M2': -1, 'Q(Гкал)': -1, 'Tи(ч)': -1}
+        heat_cols = {'Время': 1, 't1(°C)': -1, 't2(°C)': -1,'V1': -1,'M1': -1,'V2': -1,'M2': -1, 'Q(Гкал)': -1, 'Tи(ч)': -1,  'НС': -1}
+        gvs_cols = {'Время': 1, 't1(°C)': -1, 't2(°C)': -1,'V1': -1,'M1': -1,'V2': -1,'M2': -1, 'Q(Гкал)': -1, 'Tи(ч)': -1,  'НС': -1}
         ind = 0
         for cell in row:
             if cell.value == None:
@@ -134,8 +139,9 @@ class SPTParser:
         return head_data
         
 
-
-    def build_xls(self, file, data_indexes, rep_type, date_from = '01-01-2023', date_to = '18-01-2023', start_row=2):
+    def build_xls(self, file, data_indexes, rep_type, start_row=2):
+        date_from = ''
+        date_to = ''
         report = ''
         template = load_workbook(self.my_dir + '\Templates\VEC_Template.xlsx',  read_only=False, data_only=False)  # Template xlsx file  
         file_name = file[0].split('/')[len(file[0].split('/')) - 1].split('.xlsx')[0]
@@ -145,9 +151,9 @@ class SPTParser:
 
         head_data = {}
         row_index = 1; out_index = 18
-        dm_sum = 0; m1_sum = 0; m2_sum = 0; dv_sum = 0; v1_sum = 0; v2_sum = 0; t1_avg = 0; t2_avg = 0; q_sum = 0; vnr = 0; vos = 0; sum_err = ''    
+        m1_sum = 0; m2_sum = 0; dv_sum = 0; v1_sum = 0; v2_sum = 0; t1_avg = 0; t2_avg = 0; q_sum = 0; vnr = 0; vos = 0; sum_err = ''    
         for row in file[1].iter_rows(min_row=start_row):
-            num = lambda t: round(float(row[data_indexes[t]].value), 2) if row[data_indexes[t]].value != None else ' - '
+            num = lambda t: round(float(str(row[data_indexes[t]].value).replace(',', '.')), 2) if row[data_indexes[t]].value != None else ' - '
             st_row = lambda n: str(n).replace('.', ',')
             if row_index == 1:
                 row_index += 1
@@ -155,67 +161,80 @@ class SPTParser:
             if row[0].value == None:
                 break
             curr_date = datetime.date(row[0].value)
-            if (curr_date >= datetime.strptime(date_from, "%d-%m-%Y").date() and\
-                curr_date <= datetime.strptime(date_to, "%d-%m-%Y").date()):
-                ws.insert_rows(out_index)
-                for i in range(1, 14):
-                    thin = Side(border_style="thin", color="000000")
-                    ws.cell(out_index, i).border = Border(top=thin, left=thin, right=thin, bottom=thin)
-                    ws.cell(out_index, i).alignment = Alignment(horizontal="center", vertical="center")
-                ws['A' + str(out_index)] = str(curr_date.strftime("%d-%m-%Y"))
-                if data_indexes['t1(°C)'] != -1 and num('t1(°C)') != ' - ':
-                    t1_avg += num('t1(°C)') 
-                    ws['B' + str(out_index)] = st_row(num('t1(°C)'))
-                if data_indexes['t2(°C)'] != -1 and num('t2(°C)') != ' - ':
-                    t2_avg += num('t2(°C)')
-                    ws['C' + str(out_index)] = st_row(num('t2(°C)'))
-                if data_indexes['V1'] != -1 and num('V1') != ' - ':
-                    v1_sum += num('V1')
-                    ws['D' + str(out_index)] = st_row(num('V1'))
-                    ws['D' + str(out_index + 1)] = str(round(v1_sum, 2)).replace('.', ',')
-                    ws['H' + str(out_index)] = st_row(round(num('V1'), 2))
-                    ws['H' + str(out_index + 1)] = str(abs(round(v1_sum, 2))).replace('.', ',')
-                if data_indexes['M1'] != -1 and num('M1') != ' - ': 
-                    m1_sum += num('M1')
-                    ws['E' + str(out_index)] = st_row(num('M1'))
-                    ws['E' + str(out_index + 1)] = str(round(m1_sum, 2)).replace('.', ',')
-                    ws['I' + str(out_index)] = st_row(num('M1'))
-                    ws['I' + str(out_index + 1)] = str(abs(round(m1_sum, 2))).replace('.', ',')
-                if data_indexes['V2'] != -1 and num('V2') != ' - ':
-                    v2_sum += num('V2')
-                    ws['F' + str(out_index)] = st_row(num('V2'))
-                    ws['F' + str(out_index + 1)] = str(round(v2_sum, 2)).replace('.', ',')
-                    ws['H' + str(out_index)] = st_row(abs(round(num('V2') - num('V1'), 2)))
-                    ws['H' + str(out_index + 1)] = str(abs(round(v2_sum - v1_sum, 2))).replace('.', ',')
-                if data_indexes['M2'] != -1 and num('M2') != ' - ': 
-                    m2_sum += num('M2')
-                    ws['G' + str(out_index)] = st_row(num('M2'))
-                    ws['G' + str(out_index + 1)] = str(round(m2_sum, 2)).replace('.', ',')
-                    ws['I' + str(out_index)] = st_row(abs(round(num('M2') - num('M1'), 2)))
-                    ws['I' + str(out_index + 1)] = str(abs(round(m2_sum - m1_sum, 2))).replace('.', ',')
-                if data_indexes['Q(Гкал)'] != -1 and num('Q(Гкал)') != ' - ':
-                    q_sum += num('Q(Гкал)')
-                    ws['J' + str(out_index)] = st_row(num('Q(Гкал)'))
-                    ws['J' + str(out_index + 1)] = str(round(q_sum, 2)).replace('.', ',')
-                if data_indexes['Tи(ч)'] != -1 and num('Tи(ч)') != ' - ': 
-                    vnr += num('Tи(ч)')
-                    ws['K' + str(out_index)] = st_row(num('Tи(ч)'))
-                    ws['K' + str(out_index + 1)] = str(round(vnr, 2)).replace('.', ',')
-                if data_indexes['Tи(ч)'] != -1 and num('Tи(ч)') != ' - ': 
-                    vos += (24.0 - num('Tи(ч)'))
-                    ws['L' + str(out_index)] = st_row(24.0 - num('Tи(ч)'))
-                    ws['L' + str(out_index + 1)] = str(round(vos, 2)).replace('.', ',')
+            if date_from == '':
+                date_from = curr_date
+            date_to = curr_date
 
-                out_index += 1
+            ws.insert_rows(out_index)
+            for i in range(1, 14):
+                thin = Side(border_style="thin", color="000000")
+                ws.cell(out_index, i).border = Border(top=thin, left=thin, right=thin, bottom=thin)
+                ws.cell(out_index, i).alignment = Alignment(horizontal="center", vertical="center")
+            ws['A' + str(out_index)] = str(curr_date.strftime("%d-%m-%Y"))
+            if data_indexes['t1(°C)'] != -1 and num('t1(°C)') != ' - ':
+                t1_avg += num('t1(°C)') 
+                ws['B' + str(out_index)] = st_row(num('t1(°C)'))
+            if data_indexes['t2(°C)'] != -1 and num('t2(°C)') != ' - ':
+                t2_avg += num('t2(°C)')
+                ws['C' + str(out_index)] = st_row(num('t2(°C)'))
+            if data_indexes['V1'] != -1 and num('V1') != ' - ':
+                v1_sum += num('V1')
+                ws['D' + str(out_index)] = st_row(num('V1'))
+                ws['D' + str(out_index + 1)] = str(round(v1_sum, 2)).replace('.', ',')
+                ws['H' + str(out_index)] = st_row(round(num('V1'), 2))
+                ws['H' + str(out_index + 1)] = str(abs(round(v1_sum, 2))).replace('.', ',')
+            if data_indexes['M1'] != -1 and num('M1') != ' - ': 
+                m1_sum += num('M1')
+                ws['E' + str(out_index)] = st_row(num('M1'))
+                ws['E' + str(out_index + 1)] = str(round(m1_sum, 2)).replace('.', ',')
+                ws['I' + str(out_index)] = st_row(num('M1'))
+                ws['I' + str(out_index + 1)] = str(abs(round(m1_sum, 2))).replace('.', ',')
+            if data_indexes['V2'] != -1 and num('V2') != ' - ':
+                v2_sum += num('V2')
+                ws['F' + str(out_index)] = st_row(num('V2'))
+                ws['F' + str(out_index + 1)] = str(round(v2_sum, 2)).replace('.', ',')
+                ws['H' + str(out_index)] = st_row(round(num('V1') - num('V2'), 2))
+                ws['H' + str(out_index + 1)] = str(round(v1_sum - v2_sum, 2)).replace('.', ',')
+            if data_indexes['M2'] != -1 and num('M2') != ' - ': 
+                m2_sum += num('M2')
+                ws['G' + str(out_index)] = st_row(num('M2'))
+                ws['G' + str(out_index + 1)] = str(round(m2_sum, 2)).replace('.', ',')
+                ws['I' + str(out_index)] = st_row(round(num('M1') - num('M2'), 2))
+                ws['I' + str(out_index + 1)] = str(round(m1_sum - m2_sum, 2)).replace('.', ',')
+            if data_indexes['Q(Гкал)'] != -1 and num('Q(Гкал)') != ' - ':
+                q_sum += num('Q(Гкал)')
+                ws['J' + str(out_index)] = st_row(num('Q(Гкал)'))
+                ws['J' + str(out_index + 1)] = str(round(q_sum, 2)).replace('.', ',')
+            if data_indexes['Tи(ч)'] != -1 and num('Tи(ч)') != ' - ': 
+                vnr += num('Tи(ч)')
+                ws['K' + str(out_index)] = st_row(num('Tи(ч)'))
+                ws['K' + str(out_index + 1)] = str(round(vnr, 2)).replace('.', ',')
+            if data_indexes['Tи(ч)'] != -1 and num('Tи(ч)') != ' - ': 
+                vos += (24.0 - num('Tи(ч)'))
+                ws['L' + str(out_index)] = st_row(24.0 - num('Tи(ч)'))
+                ws['L' + str(out_index + 1)] = str(round(vos, 2)).replace('.', ',')
+
+            err = err_spt(row, [data_indexes['НС']])
+            ws['M' + str(out_index)] = err
+            if err not in sum_err:
+                if sum_err == '':
+                    sum_err += err
+                else:
+                    for ch in err:
+                        if ch not in sum_err:
+                            sum_err += ',' + ch
+            ws['M' + str(out_index + 1)] = sum_err
+
+            out_index += 1
             row_index += 1
 
-        ws['B' + str(out_index + 1)] = round(t1_avg/(out_index - 17), 2)
-        ws['C' + str(out_index + 1)] = round(t2_avg/(out_index - 17), 2)
+        ws['B' + str(out_index + 1)] = round(t1_avg/(out_index - 18), 2)
+        ws['C' + str(out_index + 1)] = round(t2_avg/(out_index - 18), 2)
 
         # A resoult table 
         sec_row = out_index + 4
-        ws['A' + str(sec_row)] = date_from
-        ws['A' + str(sec_row + 1)] = date_to
+        ws['A' + str(sec_row)] = datetime.strftime(date_from, "%d-%m-%Y")
+        ws['A' + str(sec_row + 1)] = datetime.strftime(date_to, "%d-%m-%Y")
         ws['B' + str(sec_row)] = '0'
         ws['B' + str(sec_row + 1)] = str(round(m1_sum, 2)).replace('.', ',')
         ws['C' + str(sec_row)] = '0'
@@ -252,7 +271,8 @@ class SPTParser:
                 head_data = self.get_head(file[0], rep_type)
             else:
                 head_data = get_head_data(self.save_dir, file[1][1][0].value, rep_type)
-        ws['A1'] = str(ws['A1'].value).replace('май', get_month(datetime.now().strftime("%d-%m-%Y")))
+
+        ws['A1'] = str(ws['A1'].value).replace('май', get_month(datetime.strftime(date_to, "%d-%m-%Y")))
         ws['B3'] = date_from
         ws['C3'] = date_to
         ws['B4'] = datetime.now().strftime("%d-%m-%Y")
@@ -266,18 +286,24 @@ class SPTParser:
         curr_dir = self.save_dir + '/Output/' + head_data['save_folder']
         if not os.path.exists(curr_dir):
             os.makedirs(curr_dir)
+        
+        name = head_data['consumer'].replace(',', '').replace('/', 'к').replace('"', '').replace('<','').replace('>','').replace('?','').replace('*','').replace('|','') + \
+            ' - ' + head_data['adress'].replace(',', '').replace('/', 'к').replace('"', '').replace('<','').replace('>','').replace('?','').replace('*','').replace('|','')
+        while name in self.report:
+            name += '_2'
         if rep_type == '1':
-            template.save(curr_dir + '/' + head_data['adress'].replace('/', 'к') + '_отопл' + '.xlsx')
-            report += curr_dir + '/' + head_data['adress'].replace('/', 'к') + '_отопл' + '.xlsx'+ '\n\n'
+            template.save(curr_dir + '/' + name + '_отопл' + '.xlsx')
+            report += head_data['save_folder'] + '/' + name + '_отопл' + '.xlsx'+ '\n\n'
         else:
-            template.save(curr_dir + '/' + head_data['adress'].replace('/', 'к') + '_ГВС' + '.xlsx')
-            report += curr_dir + '/' + head_data['adress'].replace('/', 'к') + '_ГВС' + '.xlsx'+ '\n\n'
+            template.save(curr_dir + '/' + name + '_ГВС' + '.xlsx')
+            report += head_data['save_folder'] + '/' + name + '_ГВС' + '.xlsx'+ '\n\n'
 
         return report
 
 
-    def __call__(self, date_from = '01-01-2023', date_to = '18-01-2023'):
-        report = '\tСПТ:\n' # Window print
+    def __call__(self):
+        self.report = '\tСПТ:\n' # Window print
+        print(len(self.my_parsing_files))
         for file in self.my_parsing_files:
             start_row = 1
             if file[1]['A1'].value != None:
@@ -288,6 +314,12 @@ class SPTParser:
                     heat_cols, gvs_cols = self.get_columns(list(file[1].rows)[1])
                     start_row = 2
 
-            report += self.build_xls(file, heat_cols, '1', date_from, date_to, start_row)
-            report += self.build_xls(file, gvs_cols, '2', date_from, date_to, start_row)
-        return report
+                if '_1' in str(file[1]['A1'].value):
+                    self.report += self.build_xls(file, heat_cols, '1', start_row)
+                elif '_2' in str(file[1]['A1'].value):
+                    self.report += self.build_xls(file, heat_cols, '2', start_row)
+                else: # '_' not in str(file[1]['A1'].value):
+                    self.report += self.build_xls(file, heat_cols, '1', start_row)
+                    self.report += self.build_xls(file, gvs_cols, '2', start_row)
+
+        return self.report
